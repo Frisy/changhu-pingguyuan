@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>未签字材料打印 - 居家长护业务管理系统</title>
+    <!-- 引入外部资源 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        /* 继承首页全局样式 */
+        body { font-family: "微软雅黑", "思源黑体", sans-serif; background-color: #f5f7fa; color: #333; }
+        .btn-primary { background-color: #1890FF; border-color: #1890FF; }
+        .btn-primary:hover { background-color: #096DD9; border-color: #096DD9; }
+        .text-primary { color: #1890FF !important; }
+        .text-success { color: #52C41A !important; }
+        .text-warning { color: #FAAD14 !important; }
+        .text-danger { color: #FF4D4F !important; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .card-header { background: #fff; border-bottom: 1px solid #f0f0f0; border-radius: 12px 12px 0 0; padding: 15px 20px; }
+        .card-body { padding: 20px; }
+        /* 布局样式 */
+        .app-container { display: flex; min-height: 100vh; }
+        /* 侧边导航 */
+        .sidebar { width: 220px; background: #fff; box-shadow: 1px 0 2px rgba(0,0,0,0.05); padding: 20px 0; flex-shrink: 0; }
+        .sidebar-logo { text-align: center; padding: 0 20px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; }
+        .sidebar-logo img { height: 40px; margin-bottom: 8px; }
+        .sidebar-logo h3 { font-size: 16px; color: #1890FF; font-weight: 600; margin: 0; }
+        .nav-menu { list-style: none; padding: 0; margin: 0; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link { display: flex; align-items: center; padding: 12px 20px; color: #666; text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+        .nav-link:hover, .nav-link.active { color: #1890FF; background-color: #f0f7ff; border-left: 3px solid #1890FF; }
+        .nav-link i { font-size: 18px; margin-right: 12px; width: 20px; text-align: center; }
+        /* 主内容区 */
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
+        /* 顶部导航 */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .page-title { font-size: 20px; font-weight: 600; color: #333; margin: 0; }
+        .user-info { display: flex; align-items: center; }
+        .notification { position: relative; margin-right: 20px; cursor: pointer; }
+        .notification i { font-size: 20px; color: #666; }
+        .notification-badge { position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; background: #FF4D4F; color: #fff; border-radius: 50%; font-size: 12px; text-align: center; line-height: 18px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #1890FF; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; margin-right: 10px; }
+        .user-name { font-size: 14px; font-weight: 500; }
+        /* 筛选区样式 */
+        .filter-bar { background: #fff; border-radius: 8px; padding: 15px 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .filter-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; align-items: flex-end; }
+        .filter-item { flex: 1; min-width: 150px; }
+        .filter-label { font-size: 13px; font-weight: 500; margin-bottom: 8px; display: block; }
+        .form-control { border-radius: 8px; border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
+        .form-select { border-radius: 8px; border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
+        .filter-actions { display: flex; gap: 10px; }
+        .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+        /* 列表样式 */
+        .print-table th { font-size: 13px; font-weight: 600; color: #666; text-align: center; vertical-align: middle; }
+        .print-table td { font-size: 13px; vertical-align: middle; text-align: center; }
+        .print-table .text-left { text-align: left; }
+        /* 分页样式 */
+        .pagination-container { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        .pagination { margin: 0; }
+        .page-item.active .page-link { background-color: #1890FF; border-color: #1890FF; }
+        .page-link { color: #666; }
+        .page-link:hover { color: #1890FF; }
+        /* 弹窗样式 */
+        .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-body { font-size: 13px; }
+        .modal-footer { padding: 10px 20px; border-top: 1px solid #f0f0f0; }
+        /* 预览弹窗样式 */
+        .preview-modal .modal-dialog { max-width: 900px; }
+        .preview-content { background: #fff; padding: 40px; min-height: 80vh; position: relative; }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; color: rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; rotate: -30deg; z-index: 1; }
+        .document-header { text-align: center; margin-bottom: 30px; }
+        .document-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .document-subtitle { font-size: 14px; color: #666; margin-bottom: 20px; }
+        .document-content { font-size: 14px; line-height: 1.8; }
+        .signature-area { margin-top: 50px; display: flex; justify-content: space-between; }
+        .signature-column { text-align: center; width: 30%; }
+        .signature-line { border-bottom: 1px solid #000; margin: 10px 0; height: 30px; }
+        .tab-content { margin-top: 20px; }
+        .nav-tabs .nav-link { color: #666; border: none; border-bottom: 2px solid transparent; }
+        .nav-tabs .nav-link.active { color: #1890FF; border-bottom: 2px solid #1890FF; }
+        .page-number { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边导航 -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="https://via.placeholder.com/80x40?text=居家长护" alt="系统Logo">
+                <h3>评估员工作平台</h3>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="首页.html" class="nav-link">
+                        <i class="fa fa-home"></i>
+                        <span>首页</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="线索管理页.html" class="nav-link">
+                        <i class="fa fa-list-alt"></i>
+                        <span>评估线索管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="服务协议或计划打印.html" class="nav-link active">
+                        <i class="fa fa-stethoscope"></i>
+                        <span>服务协议或计划打印</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="线上回访.html" class="nav-link">
+                        <i class="fa fa-upload"></i>
+                        <span>线上回访执行</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 顶部导航 -->
+            <div class="top-nav">
+                <h1 class="page-title">未签字服务协议与首月服务计划打印</h1>
+                <div class="user-info">
+                    <div class="notification">
+                        <i class="fa fa-bell-o"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-avatar">张</div>
+                    <span class="user-name">张三（评估员）</span>
+                </div>
+            </div>
+
+            <!-- 筛选区 -->
+            <div class="filter-bar">
+                <div class="filter-row">
+                    <div class="filter-item">
+                        <label class="filter-label">公示日期范围</label>
+                        <input type="date" class="form-control" id="startDate" placeholder="开始日期">
+                    </div>
+                    <div class="filter-item" style="min-width: 80px;">
+                        <label class="filter-label" style="visibility: hidden;">至</label>
+                        <input type="date" class="form-control" id="endDate" placeholder="结束日期">
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">失能等级</label>
+                        <select class="form-select" id="filterLevel">
+                            <option value="">全部等级</option>
+                            <option value="一级（重度失能）">一级（重度失能）</option>
+                            <option value="二级（重度失能）">二级（重度失能）</option>
+                            <option value="三级（重度失能）">三级（重度失能）</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-sm btn-primary" id="searchBtn"><i class="fa fa-search"></i> 查询</button>
+                        <button class="btn btn-sm btn-outline-secondary" id="resetBtn"><i class="fa fa-refresh"></i> 重置</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 待打印列表 -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover print-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="selectAll">
+                                        </div>
+                                    </th>
+                                    <th>姓名</th>
+                                    <th>身份证号</th>
+                                    <th>失能等级</th>
+                                    <th>公示日期</th>
+                                    <th>负责护理员</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="printTableBody">
+                                <!-- 数据将通过JavaScript动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 分页和批量操作 -->
+                    <div class="pagination-container">
+                        <div class="filter-actions">
+                            <button class="btn btn-sm btn-primary" id="batchPrintBtn" disabled>
+                                <i class="fa fa-print"></i> 批量打印选中
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary" id="batchDownloadBtn" disabled>
+                                <i class="fa fa-download"></i> 批量下载选中
+                            </button>
+                        </div>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination" id="pagination">
+                                <!-- 分页将通过JavaScript动态生成 -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 预览弹窗 -->
+    <div class="modal fade preview-modal" id="previewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">预览 - <span id="previewName">李四</span> - 未签字材料</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <button class="btn btn-sm btn-primary" id="previewPrintBtn"><i class="fa fa-print"></i> 打印</button>
+                        <button class="btn btn-sm btn-outline-primary" id="previewDownloadBtn"><i class="fa fa-download"></i> 下载</button>
+                    </div>
+                    
+                    <ul class="nav nav-tabs" id="previewTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="agreement-tab" data-bs-toggle="tab" data-bs-target="#agreement" type="button" role="tab" aria-controls="agreement" aria-selected="true">服务协议（第一份）</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="plan-tab" data-bs-toggle="tab" data-bs-target="#plan" type="button" role="tab" aria-controls="plan" aria-selected="false">首月服务计划（第一份）</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="previewTabContent">
+                        <!-- 服务协议预览 -->
+                        <div class="tab-pane fade show active" id="agreement" role="tabpanel" aria-labelledby="agreement-tab">
+                            <div class="preview-content">
+                                <div class="watermark">未签字版</div>
+                                <div class="document-header">
+                                    <div class="document-title">绍兴市长期护理保险护理服务协议</div>
+                                    <div class="document-subtitle">（适用于重度失能人员）</div>
+                                </div>
+                                
+                                <div class="document-content">
+                                    <p><strong>甲方（服务机构）：</strong> 绍兴市XX护理服务有限公司</p>
+                                    <p><strong>乙方（服务对象）：</strong> <span id="agreementName">李四</span></p>
+                                    <p><strong>身份证号：</strong> <span id="agreementIdcard">330101********1234</span></p>
+                                    <p><strong>联系电话：</strong> 138****1234</p>
+                                    <p><strong>失能等级：</strong> <span id="agreementLevel">一级（重度失能）</span></p>
+                                    <p><strong>丙方（护理员）：</strong> <span id="agreementNurse">王五</span></p>
+                                    <p><strong>联系电话：</strong> 139****5678</p>
+                                    
+                                    <p style="margin-top: 30px;"><strong>第一条 服务内容</strong></p>
+                                    <p>1.1 甲方根据乙方的失能等级和实际需求，按照绍兴市长护险相关规定，为乙方提供以下护理服务：</p>
+                                    <ul style="list-style-type: decimal; margin-left: 20px;">
+                                        <li>生活照料：包括但不限于协助进食、洗漱、穿衣、翻身等日常生活活动</li>
+                                        <li>医疗护理：包括但不限于生命体征监测、用药指导、康复护理等</li>
+                                        <li>心理疏导：定期与乙方沟通，提供必要的心理支持和疏导</li>
+                                    </ul>
+                                    
+                                    <p><strong>第二条 服务时间</strong></p>
+                                    <p>2.1 本协议服务期限自 <span id="agreementStartDate">2024年06月01日</span> 起至 <span id="agreementEndDate">2025年05月31日</span> 止。</p>
+                                    <p>2.2 具体服务时间安排：每周一至周五，上午9:00-11:00，下午14:00-16:00。</p>
+                                    
+                                    <p><strong>第三条 双方权利与义务</strong></p>
+                                    <p>3.1 甲方权利与义务：</p>
+                                    <ul style="list-style-type: disc; margin-left: 20px;">
+                                        <li>按照协议约定提供合格的护理服务</li>
+                                        <li>定期对服务质量进行检查和评估</li>
+                                        <li>有权要求乙方配合护理服务的开展</li>
+                                    </ul>
+                                    <p>3.2 乙方权利与义务：</p>
+                                    <ul style="list-style-type: disc; margin-left: 20px;">
+                                        <li>有权享受协议约定的护理服务</li>
+                                        <li>应配合甲方护理员的工作，如实告知健康状况</li>
+                                        <li>应尊重护理员的人格，不得歧视、虐待护理员</li>
+                                    </ul>
+                                    
+                                    <div class="signature-area">
+                                        <div class="signature-column">
+                                            <div>甲方（盖章）：</div>
+                                            <div class="signature-line"></div>
+                                            <div>法定代表人（签字）：</div>
+                                            <div class="signature-line"></div>
+                                            <div>日期： 年 月 日</div>
+                                        </div>
+                                        <div class="signature-column">
+                                            <div>乙方（签字）：</div>
+                                            <div class="signature-line"></div>
+                                            <div>家属（签字）：</div>
+                                            <div class="signature-line"></div>
+                                            <div>日期： 年 月 日</div>
+                                        </div>
+                                        <div class="signature-column">
+                                            <div>丙方（签字）：</div>
+                                            <div class="signature-line"></div>
+                                            <div>联系电话：</div>
+                                            <div class="signature-line"></div>
+                                            <div>日期： 年 月 日</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="page-number">第 1 页 / 共 3 页</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 首月服务计划预览 -->
+                        <div class="tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">
+                            <div class="preview-content">
+                                <div class="watermark">未签字版</div>
+                                <div class="document-header">
+                                    <div class="document-title">首月护理服务计划</div>
+                                    <div class="document-subtitle">服务对象：<span id="planName">李四</span> | 失能等级：<span id="planLevel">一级（重度失能）</span></div>
+                                </div>
+                                
+                                <div class="document-content">
+                                    <p><strong>服务月份：</strong> <span id="planMonth">2024年06月</span></p>
+                                    <p><strong>负责护理员：</strong> <span id="planNurse">王五</span> | <strong>联系电话：</strong> 139****5678</p>
+                                    
+                                    <p style="margin-top: 30px;"><strong>一、服务目标</strong></p>
+                                    <p>1. 帮助服务对象维持基本生活能力，提高生活质量</p>
+                                    <p>2. 预防压疮、肺部感染等并发症的发生</p>
+                                    <p>3. 提供心理支持，缓解服务对象焦虑情绪</p>
+                                    
+                                    <p><strong>二、服务内容安排</strong></p>
+                                    <table class="table table-bordered" style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                                        <thead>
+                                            <tr>
+                                                <th style="border: 1px solid #000; padding: 8px; text-align: center;">服务项目</th>
+                                                <th style="border: 1px solid #000; padding: 8px; text-align: center;">服务频次</th>
+                                                <th style="border: 1px solid #000; padding: 8px; text-align: center;">服务时长</th>
+                                                <th style="border: 1px solid #000; padding: 8px; text-align: center;">服务时间</th>
+                                                <th style="border: 1px solid #000; padding: 8px; text-align: center;">备注</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid #000; padding: 8px;">生活照料</td>
+                                                <td style="border: 1px solid #000; padding: 8px; text-align: center;">每日</td>
+                                                <td style="border: 1px solid #000; padding: 8px; text-align: center;">2小时</td>
+                                                <td style="border: 1px solid #000; padding: 8px; text-align: center;">上午9:00-11:00</td>
+                                                <td style="border: 1px solid #000; padding: 8px;">协助进食、洗漱、穿衣</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #000; padding: 8px;">康复护理</td>
+                                                <td style="border: 1px solid #000; padding: 8px; text-align: center;">每日</td>
+                                                <td style="border: 1px solid #000; padding: 8px; text-align: center;">1小时</td>
+                                                <td style="border: 1px solid #000; padding: 8px; text-align: center;">下午14:00-15:00</td>
+                                                <td style="border: 1px solid #000; padding: 8px;">肢体功能训练、翻身叩背</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #000; padding: 8px;">心理疏导</td>
+                                                <td style="border: 1px solid #000; padding: 8px; text-align: center;">每周2次</td>
+                                                <td style="border: 1px solid #000; padding: 8px; text-align: center;">30分钟</td>
+                                                <td style="border: 1px solid #000; padding: 8px; text-align: center;">周三、周五下午</td>
+                                                <td style="border: 1px solid #000; padding: 8px;">情绪沟通、心理支持</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                    <p><strong>三、注意事项</strong></p>
+                                    <ul style="list-style-type: disc; margin-left: 20px;">
+                                        <li>护理员需严格按照计划提供服务，不得擅自更改</li>
+                                        <li>服务过程中如发现服务对象健康状况变化，应及时报告并调整服务计划</li>
+                                        <li>服务对象及家属应配合护理员工作，共同完成护理目标</li>
+                                    </ul>
+                                    
+                                    <div class="signature-area">
+                                        <div class="signature-column">
+                                            <div>服务机构（盖章）：</div>
+                                            <div class="signature-line"></div>
+                                            <div>日期： 年 月 日</div>
+                                        </div>
+                                        <div class="signature-column">
+                                            <div>服务对象/家属（签字）：</div>
+                                            <div class="signature-line"></div>
+                                            <div>日期： 年 月 日</div>
+                                        </div>
+                                        <div class="signature-column">
+                                            <div>护理员（签字）：</div>
+                                            <div class="signature-line"></div>
+                                            <div>日期： 年 月 日</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="page-number">第 1 页 / 共 3 页</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 模拟打印数据（实际应从后端获取）
+        let allPrintData = [
+            {
+                id: 1,
+                name: '李四',
+                idcard: '330101********1234',
+                level: '一级（重度失能）',
+                publish_date: '2024-05-20',
+                nurse: '王五'
+            },
+            {
+                id: 2,
+                name: '赵六',
+                idcard: '330102********5678',
+                level: '二级（重度失能）',
+                publish_date: '2024-05-19',
+                nurse: '钱七'
+            },
+            {
+                id: 3,
+                name: '孙八',
+                idcard: '330103********9012',
+                level: '三级（重度失能）',
+                publish_date: '2024-05-18',
+                nurse: '周九'
+            },
+            {
+                id: 4,
+                name: '吴十',
+                idcard: '330104********1111',
+                level: '一级（重度失能）',
+                publish_date: '2024-05-17',
+                nurse: '王五'
+            },
+            {
+                id: 5,
+                name: '郑十一',
+                idcard: '330105********2222',
+                level: '二级（重度失能）',
+                publish_date: '2024-05-16',
+                nurse: '钱七'
+            }
+        ];
+
+        // 当前筛选条件
+        let currentFilters = {
+            startDate: '',
+            endDate: '',
+            level: ''
+        };
+
+        // 分页配置
+        let paginationConfig = {
+            currentPage: 1,
+            pageSize: 10,
+            total: 0
+        };
+
+        // 筛选数据
+        function filterPrintData() {
+            let filtered = allPrintData.filter(item => {
+                // 日期范围筛选
+                if (currentFilters.startDate && item.publish_date < currentFilters.startDate) {
+                    return false;
+                }
+                if (currentFilters.endDate && item.publish_date > currentFilters.endDate) {
+                    return false;
+                }
+                // 失能等级筛选
+                if (currentFilters.level && item.level !== currentFilters.level) {
+                    return false;
+                }
+                return true;
+            });
+
+            paginationConfig.total = filtered.length;
+            return filtered;
+        }
+
+        // 渲染表格
+        function renderTable() {
+            const filteredData = filterPrintData();
+            const startIndex = (paginationConfig.currentPage - 1) * paginationConfig.pageSize;
+            const endIndex = startIndex + paginationConfig.pageSize;
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            const tbody = $('#printTableBody');
+            tbody.empty();
+
+            if (pageData.length === 0) {
+                tbody.append('<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">暂无数据</td></tr>');
+            } else {
+                pageData.forEach(item => {
+                    const row = `
+                        <tr>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="printItem" value="${item.id}">
+                                </div>
+                            </td>
+                            <td>${item.name}</td>
+                            <td>${item.idcard}</td>
+                            <td>${item.level}</td>
+                            <td>${item.publish_date}</td>
+                            <td>${item.nurse}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary preview-btn" 
+                                        data-id="${item.id}" 
+                                        data-name="${item.name}" 
+                                        data-idcard="${item.idcard}" 
+                                        data-level="${item.level}" 
+                                        data-publish-date="${item.publish_date}" 
+                                        data-nurse="${item.nurse}">
+                                    <i class="fa fa-eye"></i> 预览
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary print-btn" 
+                                        data-id="${item.id}" 
+                                        data-name="${item.name}">
+                                    <i class="fa fa-print"></i> 打印
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary download-btn" 
+                                        data-id="${item.id}" 
+                                        data-name="${item.name}">
+                                    <i class="fa fa-download"></i> 下载
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+            }
+
+            renderPagination();
+            updateBatchButtonStatus();
+        }
+
+        // 渲染分页
+        function renderPagination() {
+            const totalPages = Math.ceil(paginationConfig.total / paginationConfig.pageSize);
+            const pagination = $('#pagination');
+            pagination.empty();
+
+            if (totalPages <= 1) {
+                return;
+            }
+
+            // 上一页
+            const prevDisabled = paginationConfig.currentPage === 1 ? 'disabled' : '';
+            pagination.append(`
+                <li class="page-item ${prevDisabled}">
+                    <a class="page-link" href="#" data-page="${paginationConfig.currentPage - 1}">上一页</a>
+                </li>
+            `);
+
+            // 页码
+            const maxVisible = 5;
+            let startPage = Math.max(1, paginationConfig.currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            if (startPage > 1) {
+                pagination.append(`<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+                if (startPage > 2) {
+                    pagination.append(`<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const active = i === paginationConfig.currentPage ? 'active' : '';
+                pagination.append(`
+                    <li class="page-item ${active}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>
+                `);
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    pagination.append(`<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`);
+                }
+                pagination.append(`<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
+            }
+
+            // 下一页
+            const nextDisabled = paginationConfig.currentPage === totalPages ? 'disabled' : '';
+            pagination.append(`
+                <li class="page-item ${nextDisabled}">
+                    <a class="page-link" href="#" data-page="${paginationConfig.currentPage + 1}">下一页</a>
+                </li>
+            `);
+        }
+
+        // 查询按钮点击事件
+        $('#searchBtn').click(function() {
+            currentFilters.startDate = $('#startDate').val();
+            currentFilters.endDate = $('#endDate').val();
+            currentFilters.level = $('#filterLevel').val();
+            paginationConfig.currentPage = 1;
+            renderTable();
+        });
+
+        // 重置按钮点击事件
+        $('#resetBtn').click(function() {
+            $('#startDate').val('');
+            $('#endDate').val('');
+            $('#filterLevel').val('');
+            currentFilters = {
+                startDate: '',
+                endDate: '',
+                level: ''
+            };
+            paginationConfig.currentPage = 1;
+            renderTable();
+        });
+
+        // 分页点击事件
+        $(document).on('click', '.pagination .page-link', function(e) {
+            e.preventDefault();
+            const page = $(this).data('page');
+            if (page && page !== paginationConfig.currentPage && page >= 1) {
+                paginationConfig.currentPage = page;
+                renderTable();
+            }
+        });
+
+        $('.notification').click(function() {
+            alert('您有3条新通知：\n1. 平台管理员更新了服务计划格式\n2. 医保局驳回了1条评估材料，请修改后重新提交\n3. 新分配了5条评估线索');
+        });
+        
+        // 全选/取消全选
+        $(document).on('click', '#selectAll', function() {
+            const isChecked = $(this).prop('checked');
+            $('input[name="printItem"]').prop('checked', isChecked);
+            updateBatchButtonStatus();
+        });
+
+        // 单个复选框变化
+        $(document).on('change', 'input[name="printItem"]', function() {
+            updateBatchButtonStatus();
+            // 更新全选状态
+            const totalChecked = $('input[name="printItem"]:checked').length;
+            const totalItems = $('input[name="printItem"]').length;
+            $('#selectAll').prop('checked', totalChecked === totalItems && totalItems > 0);
+        });
+
+        // 更新批量按钮状态
+        function updateBatchButtonStatus() {
+            const checkedCount = $('input[name="printItem"]:checked').length;
+            $('#batchPrintBtn').prop('disabled', checkedCount === 0);
+            $('#batchDownloadBtn').prop('disabled', checkedCount === 0);
+        }
+
+        // 预览按钮点击
+        $(document).on('click', '.preview-btn', function() {
+            const data = $(this).data();
+            $('#previewName').text(data.name);
+            
+            // 填充服务协议内容
+            $('#agreementName').text(data.name);
+            $('#agreementIdcard').text(data.idcard);
+            $('#agreementLevel').text(data.level);
+            $('#agreementNurse').text(data.nurse);
+            $('#agreementStartDate').text('2024年06月01日');
+            $('#agreementEndDate').text('2025年05月31日');
+            
+            // 填充服务计划内容
+            $('#planName').text(data.name);
+            $('#planLevel').text(data.level);
+            $('#planMonth').text('2024年06月');
+            $('#planNurse').text(data.nurse);
+            
+            $('#previewModal').modal('show');
+        });
+
+        // 打印按钮点击
+        $(document).on('click', '.print-btn', function() {
+            const data = $(this).data();
+            alert(`正在打印 ${data.name} 的服务协议和首月服务计划（各三份）...`);
+            // 实际项目中需调用打印API，生成PDF并触发打印
+        });
+
+        // 下载按钮点击
+        $(document).on('click', '.download-btn', function() {
+            const data = $(this).data();
+            const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+            alert(`正在下载 ${data.name} 的服务协议和首月服务计划...`);
+            alert(`文件命名格式：${today}${data.name}-服务协议（未签字）.pdf`);
+            // 实际项目中需生成PDF并触发下载
+        });
+
+        // 预览弹窗中的打印按钮
+        $('#previewPrintBtn').click(function() {
+            const name = $('#previewName').text();
+            alert(`正在打印 ${name} 的服务协议和首月服务计划（各三份）...`);
+            // 实际项目中需调用打印API，生成PDF并触发打印
+        });
+
+        // 预览弹窗中的下载按钮
+        $('#previewDownloadBtn').click(function() {
+            const name = $('#previewName').text();
+            const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+            alert(`正在下载 ${name} 的服务协议和首月服务计划...`);
+            alert(`文件命名格式：${today}${name}-服务协议（未签字）.pdf`);
+            // 实际项目中需生成PDF并触发下载
+        });
+
+        // 批量打印按钮
+        $('#batchPrintBtn').click(function() {
+            const checkedItems = $('input[name="printItem"]:checked');
+            const names = [];
+            checkedItems.each(function() {
+                const id = $(this).val();
+                const name = $(`button[data-id="${id}"].print-btn`).data('name');
+                names.push(name);
+            });
+            alert(`正在批量打印 ${names.join('、')} 的服务协议和首月服务计划（各三份）...`);
+            // 实际项目中需调用打印API，批量生成PDF并触发打印
+        });
+
+        // 批量下载按钮
+        $('#batchDownloadBtn').click(function() {
+            const checkedItems = $('input[name="printItem"]:checked');
+            const names = [];
+            checkedItems.each(function() {
+                const id = $(this).val();
+                const name = $(`button[data-id="${id}"].download-btn`).data('name');
+                names.push(name);
+            });
+            alert(`正在批量下载 ${names.join('、')} 的服务协议和首月服务计划...`);
+            // 实际项目中需批量生成PDF并触发下载
+        });
+
+        // 初始化：渲染表格
+        renderTable();
+    </script>
+</body>
+</html>

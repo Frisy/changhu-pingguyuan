@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人评估线索管理 - 居家长护业务管理系统</title>
+    <!-- 引入外部资源 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        /* 继承首页全局样式 */
+        body { font-family: "微软雅黑", "思源黑体", sans-serif; background-color: #f5f7fa; color: #333; }
+        .btn-primary { background-color: #1890FF; border-color: #1890FF; }
+        .btn-primary:hover { background-color: #096DD9; border-color: #096DD9; }
+        .text-primary { color: #1890FF !important; }
+        .text-success { color: #52C41A !important; }
+        .text-warning { color: #FAAD14 !important; }
+        .text-danger { color: #FF4D4F !important; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .card-header { background: #fff; border-bottom: 1px solid #f0f0f0; border-radius: 12px 12px 0 0; padding: 15px 20px; }
+        .card-body { padding: 20px; }
+        /* 布局样式 */
+        .app-container { display: flex; min-height: 100vh; }
+        /* 侧边导航 */
+        .sidebar { width: 220px; background: #fff; box-shadow: 1px 0 2px rgba(0,0,0,0.05); padding: 20px 0; flex-shrink: 0; }
+        .sidebar-logo { text-align: center; padding: 0 20px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; }
+        .sidebar-logo img { height: 40px; margin-bottom: 8px; }
+        .sidebar-logo h3 { font-size: 16px; color: #1890FF; font-weight: 600; margin: 0; }
+        .nav-menu { list-style: none; padding: 0; margin: 0; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link { display: flex; align-items: center; padding: 12px 20px; color: #666; text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+        .nav-link:hover, .nav-link.active { color: #1890FF; background-color: #f0f7ff; border-left: 3px solid #1890FF; }
+        .nav-link i { font-size: 18px; margin-right: 12px; width: 20px; text-align: center; }
+        /* 主内容区 */
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
+        /* 顶部导航 */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .page-title { font-size: 20px; font-weight: 600; color: #333; margin: 0; }
+        .user-info { display: flex; align-items: center; }
+        .notification { position: relative; margin-right: 20px; cursor: pointer; }
+        .notification i { font-size: 20px; color: #666; }
+        .notification-badge { position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; background: #FF4D4F; color: #fff; border-radius: 50%; font-size: 12px; text-align: center; line-height: 18px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #1890FF; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; margin-right: 10px; }
+        .user-name { font-size: 14px; font-weight: 500; }
+        /* 筛选区样式 */
+        .filter-bar { background: #fff; border-radius: 8px; padding: 15px 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .filter-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; align-items: flex-end; }
+        .filter-item { flex: 1; min-width: 150px; }
+        .filter-label { font-size: 13px; font-weight: 500; margin-bottom: 8px; display: block; }
+        .form-control { border-radius: 8px; border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
+        .form-select { border-radius: 8px; border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
+        .filter-actions { display: flex; gap: 10px; }
+        .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+        /* 列表样式 */
+        .clue-table th { font-size: 13px; font-weight: 600; color: #666; text-align: center; vertical-align: middle; }
+        .clue-table td { font-size: 13px; vertical-align: middle; text-align: center; }
+        .clue-table .text-left { text-align: left; }
+        /* 分页样式 */
+        .pagination-container { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        .pagination { margin: 0; }
+        .page-item.active .page-link { background-color: #1890FF; border-color: #1890FF; }
+        .page-link { color: #666; }
+        .page-link:hover { color: #1890FF; }
+        /* 弹窗样式 */
+        .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-body { font-size: 13px; }
+        .modal-footer { padding: 10px 20px; border-top: 1px solid #f0f0f0; }
+        /* 导入结果样式 */
+        .import-result { max-height: 300px; overflow-y: auto; margin-top: 10px; }
+        .result-item { padding: 8px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; }
+        .result-item .error { color: #FF4D4F; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边导航 -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="https://via.placeholder.com/80x40?text=居家长护" alt="系统Logo">
+                <h3>评估员工作平台</h3>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="首页.html" class="nav-link">
+                        <i class="fa fa-home"></i>
+                        <span>首页</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="线索管理页.html" class="nav-link active">
+                        <i class="fa fa-list-alt"></i>
+                        <span>评估线索管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="服务协议或计划打印.html" class="nav-link">
+                        <i class="fa fa-stethoscope"></i>
+                        <span>服务协议或计划打印</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="线上回访.html" class="nav-link">
+                        <i class="fa fa-upload"></i>
+                        <span>线上回访执行</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 顶部导航 -->
+            <div class="top-nav">
+                <h1 class="page-title">个人评估线索管理</h1>
+                <div class="user-info">
+                    <div class="notification">
+                        <i class="fa fa-bell-o"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-avatar">张</div>
+                    <span class="user-name">张三（评估员）</span>
+                </div>
+            </div>
+
+            <!-- 筛选区 -->
+            <div class="filter-bar">
+                <div class="filter-row">
+                    <div class="filter-item">
+                        <label class="filter-label">日期范围</label>
+                        <input type="date" class="form-control" id="startDate" placeholder="开始日期">
+                    </div>
+                    <div class="filter-item" style="min-width: 80px;">
+                        <label class="filter-label" style="visibility: hidden;">至</label>
+                        <input type="date" class="form-control" id="endDate" placeholder="结束日期">
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">姓名</label>
+                        <input type="text" class="form-control" id="filterName" placeholder="请输入评估对象姓名">
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">线索来源</label>
+                        <select class="form-select" id="filterSource">
+                            <option value="">全部来源</option>
+                            <option value="社区">社区</option>
+                            <option value="医保">医保</option>
+                            <option value="自行摸排">自行摸排</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-sm btn-primary" id="searchBtn"><i class="fa fa-search"></i> 查询</button>
+                        <button class="btn btn-sm btn-outline-secondary" id="resetBtn"><i class="fa fa-refresh"></i> 重置</button>
+                    </div>
+                </div>
+                <div class="filter-actions" style="justify-content: flex-end;">
+                    <button class="btn btn-sm btn-outline-primary" id="downloadTemplate"><i class="fa fa-download"></i> 下载自行摸排线索模板</button>
+                    <button class="btn btn-sm btn-primary" id="importClues"><i class="fa fa-upload"></i> 导入自行摸排线索</button>
+                </div>
+            </div>
+
+            <!-- 线索列表 -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover clue-table">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>姓名</th>
+                                    <th>身份证号</th>
+                                    <th>家属姓名</th>
+                                    <th>联系电话</th>
+                                    <th>社区/村镇</th>
+                                    <th class="text-left">地址</th>
+                                    <th>线索来源</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clueTableBody">
+                                <!-- 数据将通过JavaScript动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 分页 -->
+                    <div class="pagination-container">
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary" id="exportClueListBtn"><i class="fa fa-download"></i> 导出个人线索列表</button>
+                        </div>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination" id="pagination">
+                                <!-- 分页将通过JavaScript动态生成 -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑线索弹窗 -->
+    <div class="modal fade" id="editClueModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">编辑评估线索 - <span id="editName">李四</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editClueForm">
+                        <input type="hidden" id="editId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">姓名</label>
+                                    <input type="text" class="form-control" id="editNameInput" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">身份证号</label>
+                                    <input type="text" class="form-control" id="editIdCardInput" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">家属姓名</label>
+                                    <input type="text" class="form-control" id="editFamilyInput">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">联系电话 <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="editPhoneInput" placeholder="请输入11位联系电话">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">社区/村镇</label>
+                                    <input type="text" class="form-control" id="editCommunityInput">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">线索来源</label>
+                                    <input type="text" class="form-control" id="editSourceInput" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">详细地址 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="editAddressInput" placeholder="请输入详细地址">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">备注</label>
+                                    <textarea class="form-control" id="editRemarkInput" rows="3" placeholder="如：需周末上门评估"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="saveClueEdit">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入线索弹窗 -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">导入自行摸排线索</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="importForm">
+                        <div class="form-group">
+                            <label class="form-label">上传Excel文件 <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="excelFile" accept=".xlsx, .xls" required>
+                            <div class="form-hint" style="margin-top: 5px; font-size: 12px;">
+                                请下载模板并按格式填写，支持.xlsx和.xls格式，单次最多导入1000条
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="submitImport">开始导入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入结果弹窗 -->
+    <div class="modal fade" id="importResultModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">导入结果</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <p>成功导入 <span class="text-success" id="successCount">2</span> 条线索</p>
+                        <p>失败导入 <span class="text-danger" id="failCount">1</span> 条线索</p>
+                    </div>
+                    <div class="import-result">
+                        <div class="result-item">
+                            <span>第3行：</span>
+                            <span class="error">联系电话格式错误（需为11位）</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="downloadErrorReport">下载错误报告</button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="reImport">重新导入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        // 模拟线索数据（实际应从后端获取）
+        let allClueData = [
+            {
+                id: 1,
+                date: '2024-05-20',
+                name: '李四',
+                idcard: '330101********1234',
+                family: '李五',
+                phone: '13812345678',
+                community: '西湖区XX社区',
+                address: '西湖区XX街道XX小区3栋502室',
+                source: '社区'
+            },
+            {
+                id: 2,
+                date: '2024-05-19',
+                name: '王五',
+                idcard: '330102********5678',
+                family: '王六',
+                phone: '13912345678',
+                community: '上城区XX村镇',
+                address: '上城区XX镇XX村2组15号',
+                source: '医保'
+            },
+            {
+                id: 3,
+                date: '2024-05-18',
+                name: '赵六',
+                idcard: '330103********9012',
+                family: '赵七',
+                phone: '13712345678',
+                community: '拱墅区XX社区',
+                address: '拱墅区XX路XX号XX公寓2单元301室',
+                source: '自行摸排'
+            },
+            {
+                id: 4,
+                date: '2024-05-17',
+                name: '孙九',
+                idcard: '330104********3456',
+                family: '孙十',
+                phone: '13612345678',
+                community: '余杭区XX社区',
+                address: '余杭区XX街道XX小区1栋201室',
+                source: '社区'
+            },
+            {
+                id: 5,
+                date: '2024-05-16',
+                name: '周十一',
+                idcard: '330105********7890',
+                family: '周十二',
+                phone: '13512345678',
+                community: '临安区XX村镇',
+                address: '临安区XX镇XX村3组20号',
+                source: '医保'
+            }
+        ];
+
+        // 当前筛选条件
+        let currentFilters = {
+            startDate: '',
+            endDate: '',
+            name: '',
+            source: ''
+        };
+
+        // 分页配置
+        let paginationConfig = {
+            currentPage: 1,
+            pageSize: 10,
+            total: 0
+        };
+
+        // 筛选数据
+        function filterClueData() {
+            let filtered = allClueData.filter(clue => {
+                // 日期范围筛选
+                if (currentFilters.startDate && clue.date < currentFilters.startDate) {
+                    return false;
+                }
+                if (currentFilters.endDate && clue.date > currentFilters.endDate) {
+                    return false;
+                }
+                // 姓名筛选
+                if (currentFilters.name && !clue.name.includes(currentFilters.name)) {
+                    return false;
+                }
+                // 线索来源筛选
+                if (currentFilters.source && clue.source !== currentFilters.source) {
+                    return false;
+                }
+                return true;
+            });
+
+            paginationConfig.total = filtered.length;
+            return filtered;
+        }
+
+        // 通知点击事件
+        $('.notification').click(function() {
+            alert('您有3条新通知：\n1. 平台管理员更新了服务计划格式\n2. 医保局驳回了1条评估材料，请修改后重新提交\n3. 新分配了5条评估线索');
+        });
+        // 渲染表格
+        function renderTable() {
+            const filteredData = filterClueData();
+            const startIndex = (paginationConfig.currentPage - 1) * paginationConfig.pageSize;
+            const endIndex = startIndex + paginationConfig.pageSize;
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            const tbody = $('#clueTableBody');
+            tbody.empty();
+
+            if (pageData.length === 0) {
+                tbody.append('<tr><td colspan="9" style="text-align: center; padding: 40px; color: #999;">暂无数据</td></tr>');
+            } else {
+                pageData.forEach(clue => {
+                    const phoneDisplay = clue.phone.length === 11 ? 
+                        clue.phone.substring(0, 3) + '****' + clue.phone.substring(7) : clue.phone;
+                    const row = `
+                        <tr>
+                            <td>${clue.date}</td>
+                            <td>${clue.name}</td>
+                            <td>${clue.idcard}</td>
+                            <td>${clue.family || ''}</td>
+                            <td>${phoneDisplay}</td>
+                            <td>${clue.community || ''}</td>
+                            <td class="text-left">${clue.address}</td>
+                            <td>${clue.source}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary edit-clue" 
+                                        data-id="${clue.id}" 
+                                        data-name="${clue.name}" 
+                                        data-idcard="${clue.idcard}" 
+                                        data-family="${clue.family || ''}" 
+                                        data-phone="${clue.phone}" 
+                                        data-community="${clue.community || ''}" 
+                                        data-address="${clue.address}" 
+                                        data-source="${clue.source}">
+                                    <i class="fa fa-edit"></i> 编辑
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+            }
+
+            renderPagination();
+        }
+
+        // 渲染分页
+        function renderPagination() {
+            const totalPages = Math.ceil(paginationConfig.total / paginationConfig.pageSize);
+            const pagination = $('#pagination');
+            pagination.empty();
+
+            if (totalPages <= 1) {
+                return;
+            }
+
+            // 上一页
+            const prevDisabled = paginationConfig.currentPage === 1 ? 'disabled' : '';
+            pagination.append(`
+                <li class="page-item ${prevDisabled}">
+                    <a class="page-link" href="#" data-page="${paginationConfig.currentPage - 1}">上一页</a>
+                </li>
+            `);
+
+            // 页码
+            const maxVisible = 5;
+            let startPage = Math.max(1, paginationConfig.currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            if (startPage > 1) {
+                pagination.append(`<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+                if (startPage > 2) {
+                    pagination.append(`<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const active = i === paginationConfig.currentPage ? 'active' : '';
+                pagination.append(`
+                    <li class="page-item ${active}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>
+                `);
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    pagination.append(`<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`);
+                }
+                pagination.append(`<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
+            }
+
+            // 下一页
+            const nextDisabled = paginationConfig.currentPage === totalPages ? 'disabled' : '';
+            pagination.append(`
+                <li class="page-item ${nextDisabled}">
+                    <a class="page-link" href="#" data-page="${paginationConfig.currentPage + 1}">下一页</a>
+                </li>
+            `);
+        }
+
+        // 查询按钮点击事件
+        $('#searchBtn').click(function() {
+            currentFilters.startDate = $('#startDate').val();
+            currentFilters.endDate = $('#endDate').val();
+            currentFilters.name = $('#filterName').val().trim();
+            currentFilters.source = $('#filterSource').val();
+            paginationConfig.currentPage = 1;
+            renderTable();
+        });
+
+        // 重置按钮点击事件
+        $('#resetBtn').click(function() {
+            $('#startDate').val('');
+            $('#endDate').val('');
+            $('#filterName').val('');
+            $('#filterSource').val('');
+            currentFilters = {
+                startDate: '',
+                endDate: '',
+                name: '',
+                source: ''
+            };
+            paginationConfig.currentPage = 1;
+            renderTable();
+        });
+
+        // 分页点击事件
+        $(document).on('click', '.pagination .page-link', function(e) {
+            e.preventDefault();
+            const page = $(this).data('page');
+            if (page && page !== paginationConfig.currentPage && page >= 1) {
+                paginationConfig.currentPage = page;
+                renderTable();
+            }
+        });
+
+        // 导出个人线索列表
+        $('#exportClueListBtn').click(function() {
+            const filteredData = filterClueData();
+            if (filteredData.length === 0) {
+                alert('没有可导出的数据');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+            const exportData = [
+                ['日期', '姓名', '身份证号', '家属姓名', '联系电话', '社区/村镇', '地址', '线索来源']
+            ];
+
+            filteredData.forEach(clue => {
+                exportData.push([
+                    clue.date,
+                    clue.name,
+                    clue.idcard,
+                    clue.family || '',
+                    clue.phone,
+                    clue.community || '',
+                    clue.address,
+                    clue.source
+                ]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(exportData);
+            ws['!cols'] = [
+                { wch: 12 }, // 日期
+                { wch: 10 }, // 姓名
+                { wch: 18 }, // 身份证号
+                { wch: 10 }, // 家属姓名
+                { wch: 15 }, // 联系电话
+                { wch: 15 }, // 社区/村镇
+                { wch: 35 }, // 地址
+                { wch: 12 }  // 线索来源
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, '个人线索列表');
+            const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+            XLSX.writeFile(wb, `个人线索列表_${today}.xlsx`);
+        });
+
+        // 编辑线索弹窗
+        $(document).on('click', '.edit-clue', function() {
+            const data = $(this).data();
+            $('#editId').val(data.id);
+            $('#editName').text(data.name);
+            $('#editNameInput').val(data.name);
+            $('#editIdCardInput').val(data.idcard);
+            $('#editFamilyInput').val(data.family);
+            $('#editPhoneInput').val(data.phone);
+            $('#editCommunityInput').val(data.community);
+            $('#editAddressInput').val(data.address);
+            $('#editSourceInput').val(data.source);
+            $('#editRemarkInput').val(''); // 备注默认空，可根据实际需求调整
+            
+            $('#editClueModal').modal('show');
+        });
+
+        // 保存线索编辑
+        $('#saveClueEdit').click(function() {
+            const phone = $('#editPhoneInput').val();
+            const address = $('#editAddressInput').val();
+            
+            // 简单校验
+            if (!phone || phone.length !== 11) {
+                alert('请输入有效的11位联系电话');
+                return;
+            }
+            if (!address) {
+                alert('请输入详细地址');
+                return;
+            }
+            
+            // 模拟保存成功
+            alert('线索编辑成功！');
+            $('#editClueModal').modal('hide');
+            // 实际项目中需调用接口更新数据
+        });
+
+        // 下载模板
+        $('#downloadTemplate').click(function() {
+            // 模拟下载模板文件
+            alert('正在下载自行摸排线索模板...');
+            // 实际项目中需生成并下载Excel模板
+        });
+
+        // 导入线索
+        $('#importClues').click(function() {
+            $('#importModal').modal('show');
+        });
+
+        // 提交导入
+        $('#submitImport').click(function() {
+            const file = $('#excelFile')[0].files[0];
+            if (!file) {
+                alert('请选择Excel文件');
+                return;
+            }
+            
+            // 模拟导入过程
+            $('#importModal').modal('hide');
+            setTimeout(() => {
+                $('#importResultModal').modal('show');
+            }, 1500);
+        });
+
+        // 下载错误报告
+        $('#downloadErrorReport').click(function() {
+            alert('正在下载错误报告...');
+            // 实际项目中需生成并下载错误报告Excel
+        });
+
+        // 重新导入
+        $('#reImport').click(function() {
+            $('#importResultModal').modal('hide');
+            $('#excelFile').val(''); // 清空已选文件
+            $('#importModal').modal('show');
+        });
+
+        // 初始化：渲染表格
+        renderTable();
+    </script>
+</body>
+</html>

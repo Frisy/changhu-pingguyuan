@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人线上回访 - 居家长护业务管理系统</title>
+    <!-- 引入外部资源 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        /* 继承首页全局样式 */
+        body { font-family: "微软雅黑", "思源黑体", sans-serif; background-color: #f5f7fa; color: #333; }
+        .btn-primary { background-color: #1890FF; border-color: #1890FF; }
+        .btn-primary:hover { background-color: #096DD9; border-color: #096DD9; }
+        .text-primary { color: #1890FF !important; }
+        .text-success { color: #52C41A !important; }
+        .text-warning { color: #FAAD14 !important; }
+        .text-danger { color: #FF4D4F !important; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .card-header { background: #fff; border-bottom: 1px solid #f0f0f0; border-radius: 12px 12px 0 0; padding: 15px 20px; }
+        .card-body { padding: 20px; }
+        /* 布局样式 */
+        .app-container { display: flex; min-height: 100vh; }
+        /* 侧边导航 */
+        .sidebar { width: 220px; background: #fff; box-shadow: 1px 0 2px rgba(0,0,0,0.05); padding: 20px 0; flex-shrink: 0; }
+        .sidebar-logo { text-align: center; padding: 0 20px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; }
+        .sidebar-logo img { height: 40px; margin-bottom: 8px; }
+        .sidebar-logo h3 { font-size: 16px; color: #1890FF; font-weight: 600; margin: 0; }
+        .nav-menu { list-style: none; padding: 0; margin: 0; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link { display: flex; align-items: center; padding: 12px 20px; color: #666; text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+        .nav-link:hover, .nav-link.active { color: #1890FF; background-color: #f0f7ff; border-left: 3px solid #1890FF; }
+        .nav-link i { font-size: 18px; margin-right: 12px; width: 20px; text-align: center; }
+        /* 主内容区 */
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
+        /* 顶部导航 */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .page-title { font-size: 20px; font-weight: 600; color: #333; margin: 0; }
+        .user-info { display: flex; align-items: center; }
+        .notification { position: relative; margin-right: 20px; cursor: pointer; }
+        .notification i { font-size: 20px; color: #666; }
+        .notification-badge { position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; background: #FF4D4F; color: #fff; border-radius: 50%; font-size: 12px; text-align: center; line-height: 18px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #1890FF; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; margin-right: 10px; }
+        .user-name { font-size: 14px; font-weight: 500; }
+        /* 筛选区样式 */
+        .filter-bar { background: #fff; border-radius: 8px; padding: 15px 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .filter-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; align-items: flex-end; }
+        .filter-item { flex: 1; min-width: 150px; }
+        .filter-label { font-size: 13px; font-weight: 500; margin-bottom: 8px; display: block; }
+        .form-control { border-radius: 8px; border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
+        .form-select { border-radius: 8px; border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
+        .filter-actions { display: flex; gap: 10px; }
+        .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+        /* 列表样式 */
+        .visit-table th { font-size: 13px; font-weight: 600; color: #666; text-align: center; vertical-align: middle; }
+        .visit-table td { font-size: 13px; vertical-align: middle; text-align: center; }
+        .visit-table .text-left { text-align: left; }
+        /* 分页样式 */
+        .pagination-container { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        .pagination { margin: 0; }
+        .page-item.active .page-link { background-color: #1890FF; border-color: #1890FF; }
+        .page-link { color: #666; }
+        .page-link:hover { color: #1890FF; }
+        /* 弹窗样式 */
+        .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-body { font-size: 13px; }
+        .modal-footer { padding: 10px 20px; border-top: 1px solid #f0f0f0; }
+        /* 标签页样式 */
+        .nav-tabs .nav-link { color: #666; border: none; border-bottom: 2px solid transparent; padding: 10px 20px; font-size: 14px; }
+        .nav-tabs .nav-link.active { color: #1890FF; border-bottom: 2px solid #1890FF; }
+        .tab-content { margin-top: 20px; }
+        /* 回访表单样式 */
+        .visit-form .form-group { margin-bottom: 15px; }
+        .visit-form label { font-weight: 500; margin-bottom: 8px; display: block; }
+        .visit-form .form-control[readonly] { background-color: #f9f9f9; border-color: #eee; }
+        .satisfaction-radio { display: flex; gap: 20px; align-items: center; margin-top: 8px; }
+        .satisfaction-radio label { margin-bottom: 0; cursor: pointer; }
+        .satisfaction-radio input[type="radio"] { margin-right: 5px; }
+        .form-text { color: #666; font-size: 12px; margin-top: 5px; }
+        /* 照片上传样式 */
+        .photo-upload-area { border: 2px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; background-color: #f9f9f9; cursor: pointer; transition: all 0.3s; }
+        .photo-upload-area:hover { border-color: #1890FF; background-color: #f0f7ff; }
+        .photo-upload-area i { font-size: 48px; color: #1890FF; margin-bottom: 10px; display: block; }
+        .photo-upload-area p { margin: 5px 0; color: #666; font-size: 13px; }
+        .photo-preview-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .photo-preview-item { position: relative; width: 100px; height: 100px; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; }
+        .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-preview-item .photo-remove { position: absolute; top: 2px; right: 2px; background: rgba(255, 77, 79, 0.8); color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+        .photo-preview-item .photo-remove:hover { background: #FF4D4F; }
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边导航 -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="https://via.placeholder.com/80x40?text=居家长护" alt="系统Logo">
+                <h3>评估员工作平台</h3>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="首页.html" class="nav-link">
+                        <i class="fa fa-home"></i>
+                        <span>首页</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="线索管理页.html" class="nav-link">
+                        <i class="fa fa-list-alt"></i>
+                        <span>评估线索管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="服务协议或计划打印.html" class="nav-link">
+                        <i class="fa fa-stethoscope"></i>
+                        <span>服务协议或计划打印</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="线上回访.html" class="nav-link active">
+                        <i class="fa fa-upload"></i>
+                        <span>线上回访执行</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 顶部导航 -->
+            <div class="top-nav">
+                <h1 class="page-title">个人线上回访</h1>
+                <div class="user-info">
+                    <div class="notification">
+                        <i class="fa fa-bell-o"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-avatar">张</div>
+                    <span class="user-name">张三（评估员）</span>
+                </div>
+            </div>
+
+            <!-- 标签页 -->
+            <ul class="nav nav-tabs" id="visitTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">待回访</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab" aria-controls="completed" aria-selected="false">已回访</button>
+                </li>
+            </ul>
+
+            <!-- 标签页内容 -->
+            <div class="tab-content" id="visitTabContent">
+                <!-- 待回访标签页 -->
+                <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+                    <!-- 筛选区 -->
+                    <div class="filter-bar">
+                        <div class="filter-row">
+                            <div class="filter-item">
+                                <label class="filter-label">行政区域</label>
+                                <select class="form-select" id="pendingAreaFilter">
+                                    <option value="">全部区域</option>
+                                    <option value="越城区">越城区</option>
+                                    <option value="柯桥区">柯桥区</option>
+                                    <option value="上虞区">上虞区</option>
+                                </select>
+                            </div>
+                            <div class="filter-item">
+                                <label class="filter-label">护理员</label>
+                                <select class="form-select" id="pendingNurseFilter">
+                                    <option value="">全部护理员</option>
+                                    <option value="王五">王五</option>
+                                    <option value="钱七">钱七</option>
+                                    <option value="周九">周九</option>
+                                </select>
+                            </div>
+                            <div class="filter-item">
+                                <label class="filter-label">未回访时长</label>
+                                <select class="form-select" id="pendingDaysFilter">
+                                    <option value="">全部时长</option>
+                                    <option value="30">≥30天</option>
+                                    <option value="60">≥60天</option>
+                                </select>
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-sm btn-primary" id="pendingSearchBtn"><i class="fa fa-search"></i> 查询</button>
+                                <button class="btn btn-sm btn-outline-secondary" id="pendingResetBtn"><i class="fa fa-refresh"></i> 重置</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 待回访列表 -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover visit-table">
+                                    <thead>
+                                        <tr>
+                                            <th>姓名</th>
+                                            <th>身份证号</th>
+                                            <th class="text-left">居住地址</th>
+                                            <th>家属联系电话</th>
+                                            <th>对应护理员</th>
+                                            <th>分配任务时间</th>
+                                            <th>上次回访时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pendingVisitTableBody">
+                                        <!-- 数据将通过JavaScript动态加载 -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- 分页 -->
+                            <div class="pagination-container">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination" id="pendingPagination">
+                                        <!-- 分页将通过JavaScript动态生成 -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 已回访标签页 -->
+                <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+                    <!-- 筛选区 -->
+                    <div class="filter-bar">
+                        <div class="filter-row">
+                            <div class="filter-item">
+                                <label class="filter-label">回访日期范围</label>
+                                <input type="date" class="form-control" id="visitStartDate" placeholder="开始日期">
+                            </div>
+                            <div class="filter-item" style="min-width: 80px;">
+                                <label class="filter-label" style="visibility: hidden;">至</label>
+                                <input type="date" class="form-control" id="visitEndDate" placeholder="结束日期">
+                            </div>
+                            <div class="filter-item">
+                                <label class="filter-label">满意度</label>
+                                <select class="form-select" id="completedSatisfactionFilter">
+                                    <option value="">全部满意度</option>
+                                    <option value="1">非常满意</option>
+                                    <option value="2">满意</option>
+                                    <option value="3">一般</option>
+                                    <option value="4">不满意</option>
+                                </select>
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-sm btn-primary" id="completedSearchBtn"><i class="fa fa-search"></i> 查询</button>
+                                <button class="btn btn-sm btn-outline-secondary" id="completedResetBtn"><i class="fa fa-refresh"></i> 重置</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 已回访列表 -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover visit-table">
+                                    <thead>
+                                        <tr>
+                                            <th>执行回访时间</th>
+                                            <th>服务对象</th>
+                                            <th>护理员</th>
+                                            <th>回访类型</th>
+                                            <th>满意度</th>
+                                            <th class="text-left">服务对象要求</th>
+                                            <th class="text-left">现场检查描述</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="completedVisitTableBody">
+                                        <!-- 数据将通过JavaScript动态加载 -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- 分页和导出按钮 -->
+                            <div class="pagination-container">
+                                <div class="filter-actions">
+                                    <button class="btn btn-sm btn-outline-primary" id="exportVisitBtn">
+                                        <i class="fa fa-download"></i> 导出个人回访记录
+                                    </button>
+                                </div>
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination" id="completedPagination">
+                                        <!-- 分页将通过JavaScript动态生成 -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 回访表单弹窗 -->
+    <div class="modal fade" id="visitFormModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">线上回访记录 - <span id="visitFormName">李四</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="visit-form" id="visitForm">
+                        <div class="row">
+                            <!-- 只读信息区 -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>回访日期</label>
+                                    <input type="date" class="form-control" id="visitDate" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>服务对象姓名</label>
+                                    <input type="text" class="form-control" id="visitObjectName" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>身份证号</label>
+                                    <input type="text" class="form-control" id="visitObjectIdcard" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>对应护理员</label>
+                                    <input type="text" class="form-control" id="visitNurse" readonly>
+                                </div>
+                            </div>
+                            <!-- 交互区 -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>满意度 <span class="text-danger">*</span></label>
+                                    <div class="satisfaction-radio">
+                                        <label>
+                                            <input type="radio" name="satisfaction" value="1"> 非常满意
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="satisfaction" value="2"> 满意
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="satisfaction" value="3"> 一般
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="satisfaction" value="4"> 不满意
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>服务对象要求</label>
+                                    <textarea class="form-control" id="clientReq" rows="3" placeholder="请输入服务对象的要求（限254字）" maxlength="254"></textarea>
+                                    <div class="form-text">当前输入字数：<span id="reqWordCount">0</span>/254</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>现场检查具体情况描述</label>
+                                    <textarea class="form-control" id="visitDesc" rows="4" placeholder="请输入现场检查的具体情况描述（限254字）" maxlength="254"></textarea>
+                                    <div class="form-text">当前输入字数：<span id="descWordCount">0</span>/254</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>现场检查照片</label>
+                                    <div class="photo-upload-area" id="photoUploadArea">
+                                        <i class="fa fa-camera"></i>
+                                        <p>点击上传照片</p>
+                                        <p>支持JPG、PNG格式，单张不超过5MB，最多上传5张</p>
+                                        <input type="file" id="photoInput" accept="image/jpeg,image/png,image/jpg" multiple>
+                                    </div>
+                                    <div class="photo-preview-container" id="photoPreviewContainer"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="submitVisitBtn" disabled>提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        // 模拟待回访数据（实际应从后端获取）
+        let allPendingVisitData = [
+            {
+                id: 1,
+                client_id: 101,
+                name: '李四',
+                idcard: '330101********1234',
+                address: '越城区解放南路123号',
+                phone: '13812345678',
+                nurse: '王五',
+                alloc_time: '2024-05-10 09:00:00',
+                last_visit: '2024-04-15',
+                area: '越城区'
+            },
+            {
+                id: 2,
+                client_id: 102,
+                name: '赵六',
+                idcard: '330102********5678',
+                address: '柯桥区柯桥大道456号',
+                phone: '13912345678',
+                nurse: '钱七',
+                alloc_time: '2024-05-08 14:30:00',
+                last_visit: '2024-03-20',
+                area: '柯桥区'
+            },
+            {
+                id: 3,
+                client_id: 103,
+                name: '孙八',
+                idcard: '330103********9012',
+                address: '上虞区百官街道789号',
+                phone: '13712345678',
+                nurse: '周九',
+                alloc_time: '2024-05-05 10:15:00',
+                last_visit: '2024-02-10',
+                area: '上虞区'
+            },
+            {
+                id: 4,
+                client_id: 104,
+                name: '吴十',
+                idcard: '330104********1111',
+                address: '越城区胜利路111号',
+                phone: '13612345678',
+                nurse: '王五',
+                alloc_time: '2024-05-12 08:00:00',
+                last_visit: '2024-03-25',
+                area: '越城区'
+            }
+        ];
+
+        // 模拟已回访数据（实际应从后端获取）
+        let allCompletedVisitData = [
+            {
+                id: 1,
+                visit_time: '2024-05-20 14:30:00',
+                client_name: '张三',
+                nurse: '王五',
+                visit_type: '线上',
+                satisfaction: 1,
+                satisfaction_text: '非常满意',
+                client_req: '希望增加服务频次',
+                visit_desc: '家属反馈护理员服务专业，态度热情'
+            },
+            {
+                id: 2,
+                visit_time: '2024-05-18 10:20:00',
+                client_name: '刘一',
+                nurse: '钱七',
+                visit_type: '线上',
+                satisfaction: 3,
+                satisfaction_text: '一般',
+                client_req: '希望增加康复训练频次',
+                visit_desc: '家属希望护理员能增加康复训练的频次'
+            },
+            {
+                id: 3,
+                visit_time: '2024-05-15 16:45:00',
+                client_name: '陈二',
+                nurse: '周九',
+                visit_type: '线上',
+                satisfaction: 4,
+                satisfaction_text: '不满意',
+                client_req: '要求按时到岗，保证服务时长',
+                visit_desc: '家属反馈护理员两次迟到，服务时长不足'
+            },
+            {
+                id: 4,
+                visit_time: '2024-05-10 09:30:00',
+                client_name: '李四',
+                nurse: '王五',
+                visit_type: '线上',
+                satisfaction: 2,
+                satisfaction_text: '满意',
+                client_req: '无',
+                visit_desc: '服务正常，无特殊情况'
+            }
+        ];
+        
+        $('.notification').click(function() {
+            alert('您有3条新通知：\n1. 平台管理员更新了服务计划格式\n2. 医保局驳回了1条评估材料，请修改后重新提交\n3. 新分配了5条评估线索');
+        });
+        // 待回访筛选和分页配置
+        let pendingFilters = {
+            area: '',
+            nurse: '',
+            days: ''
+        };
+        let pendingPagination = {
+            currentPage: 1,
+            pageSize: 10,
+            total: 0
+        };
+
+        // 已回访筛选和分页配置
+        let completedFilters = {
+            startDate: '',
+            endDate: '',
+            satisfaction: ''
+        };
+        let completedPagination = {
+            currentPage: 1,
+            pageSize: 10,
+            total: 0
+        };
+
+        // 筛选待回访数据
+        function filterPendingVisitData() {
+            let filtered = allPendingVisitData.filter(visit => {
+                if (pendingFilters.area && visit.area !== pendingFilters.area) {
+                    return false;
+                }
+                if (pendingFilters.nurse && visit.nurse !== pendingFilters.nurse) {
+                    return false;
+                }
+                if (pendingFilters.days) {
+                    const days = parseInt(pendingFilters.days);
+                    const lastVisitDate = new Date(visit.last_visit);
+                    const today = new Date();
+                    const diffDays = Math.floor((today - lastVisitDate) / (1000 * 60 * 60 * 24));
+                    if (diffDays < days) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            pendingPagination.total = filtered.length;
+            return filtered;
+        }
+
+        // 筛选已回访数据
+        function filterCompletedVisitData() {
+            let filtered = allCompletedVisitData.filter(visit => {
+                const visitDate = visit.visit_time.split(' ')[0];
+                if (completedFilters.startDate && visitDate < completedFilters.startDate) {
+                    return false;
+                }
+                if (completedFilters.endDate && visitDate > completedFilters.endDate) {
+                    return false;
+                }
+                if (completedFilters.satisfaction && visit.satisfaction.toString() !== completedFilters.satisfaction) {
+                    return false;
+                }
+                return true;
+            });
+
+            completedPagination.total = filtered.length;
+            return filtered;
+        }
+
+        // 渲染待回访表格
+        function renderPendingTable() {
+            const filteredData = filterPendingVisitData();
+            const startIndex = (pendingPagination.currentPage - 1) * pendingPagination.pageSize;
+            const endIndex = startIndex + pendingPagination.pageSize;
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            const tbody = $('#pendingVisitTableBody');
+            tbody.empty();
+
+            if (pageData.length === 0) {
+                tbody.append('<tr><td colspan="8" style="text-align: center; padding: 40px; color: #999;">暂无数据</td></tr>');
+            } else {
+                pageData.forEach(visit => {
+                    const phoneDisplay = visit.phone.length === 11 ? 
+                        visit.phone.substring(0, 3) + '****' + visit.phone.substring(7) : visit.phone;
+                    const row = `
+                        <tr>
+                            <td>${visit.name}</td>
+                            <td>${visit.idcard}</td>
+                            <td class="text-left">${visit.address}</td>
+                            <td>${phoneDisplay}</td>
+                            <td>${visit.nurse}</td>
+                            <td>${visit.alloc_time}</td>
+                            <td>${visit.last_visit}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary execute-visit-btn" 
+                                        data-id="${visit.id}" 
+                                        data-client-id="${visit.client_id}"
+                                        data-name="${visit.name}" 
+                                        data-idcard="${visit.idcard}" 
+                                        data-nurse="${visit.nurse}" 
+                                        data-phone="${phoneDisplay}" 
+                                        data-address="${visit.address}" 
+                                        data-alloc-time="${visit.alloc_time}"
+                                        data-last-visit="${visit.last_visit}">
+                                    <i class="fa fa-pencil"></i> 执行回访
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+            }
+
+            renderPendingPagination();
+        }
+
+        // 渲染已回访表格
+        function renderCompletedTable() {
+            const filteredData = filterCompletedVisitData();
+            const startIndex = (completedPagination.currentPage - 1) * completedPagination.pageSize;
+            const endIndex = startIndex + completedPagination.pageSize;
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            const tbody = $('#completedVisitTableBody');
+            tbody.empty();
+
+            if (pageData.length === 0) {
+                tbody.append('<tr><td colspan="8" style="text-align: center; padding: 40px; color: #999;">暂无数据</td></tr>');
+            } else {
+                pageData.forEach(visit => {
+                    const satisfactionClass = visit.satisfaction === 1 ? 'text-success' : 
+                                             visit.satisfaction === 2 ? 'text-success' : 
+                                             visit.satisfaction === 3 ? 'text-warning' : 'text-danger';
+                    const row = `
+                        <tr>
+                            <td>${visit.visit_time}</td>
+                            <td>${visit.client_name}</td>
+                            <td>${visit.nurse}</td>
+                            <td><span class="badge bg-primary">${visit.visit_type}</span></td>
+                            <td><span class="${satisfactionClass}">${visit.satisfaction_text}</span></td>
+                            <td class="text-left">${visit.client_req || '无'}</td>
+                            <td class="text-left">${visit.visit_desc || '无'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-detail-btn" data-id="${visit.id}">
+                                    <i class="fa fa-eye"></i> 查看详情
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+            }
+
+            renderCompletedPagination();
+        }
+
+        // 渲染待回访分页
+        function renderPendingPagination() {
+            const totalPages = Math.ceil(pendingPagination.total / pendingPagination.pageSize);
+            const pagination = $('#pendingPagination');
+            pagination.empty();
+
+            if (totalPages <= 1) {
+                return;
+            }
+
+            const prevDisabled = pendingPagination.currentPage === 1 ? 'disabled' : '';
+            pagination.append(`
+                <li class="page-item ${prevDisabled}">
+                    <a class="page-link" href="#" data-page="${pendingPagination.currentPage - 1}">上一页</a>
+                </li>
+            `);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const active = i === pendingPagination.currentPage ? 'active' : '';
+                pagination.append(`
+                    <li class="page-item ${active}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>
+                `);
+            }
+
+            const nextDisabled = pendingPagination.currentPage === totalPages ? 'disabled' : '';
+            pagination.append(`
+                <li class="page-item ${nextDisabled}">
+                    <a class="page-link" href="#" data-page="${pendingPagination.currentPage + 1}">下一页</a>
+                </li>
+            `);
+        }
+
+        // 渲染已回访分页
+        function renderCompletedPagination() {
+            const totalPages = Math.ceil(completedPagination.total / completedPagination.pageSize);
+            const pagination = $('#completedPagination');
+            pagination.empty();
+
+            if (totalPages <= 1) {
+                return;
+            }
+
+            const prevDisabled = completedPagination.currentPage === 1 ? 'disabled' : '';
+            pagination.append(`
+                <li class="page-item ${prevDisabled}">
+                    <a class="page-link" href="#" data-page="${completedPagination.currentPage - 1}">上一页</a>
+                </li>
+            `);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const active = i === completedPagination.currentPage ? 'active' : '';
+                pagination.append(`
+                    <li class="page-item ${active}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>
+                `);
+            }
+
+            const nextDisabled = completedPagination.currentPage === totalPages ? 'disabled' : '';
+            pagination.append(`
+                <li class="page-item ${nextDisabled}">
+                    <a class="page-link" href="#" data-page="${completedPagination.currentPage + 1}">下一页</a>
+                </li>
+            `);
+        }
+
+        // 待回访查询按钮
+        $('#pendingSearchBtn').click(function() {
+            pendingFilters.area = $('#pendingAreaFilter').val();
+            pendingFilters.nurse = $('#pendingNurseFilter').val();
+            pendingFilters.days = $('#pendingDaysFilter').val();
+            pendingPagination.currentPage = 1;
+            renderPendingTable();
+        });
+
+        // 待回访重置按钮
+        $('#pendingResetBtn').click(function() {
+            $('#pendingAreaFilter').val('');
+            $('#pendingNurseFilter').val('');
+            $('#pendingDaysFilter').val('');
+            pendingFilters = { area: '', nurse: '', days: '' };
+            pendingPagination.currentPage = 1;
+            renderPendingTable();
+        });
+
+        // 已回访查询按钮
+        $('#completedSearchBtn').click(function() {
+            completedFilters.startDate = $('#visitStartDate').val();
+            completedFilters.endDate = $('#visitEndDate').val();
+            completedFilters.satisfaction = $('#completedSatisfactionFilter').val();
+            completedPagination.currentPage = 1;
+            renderCompletedTable();
+        });
+
+        // 已回访重置按钮
+        $('#completedResetBtn').click(function() {
+            $('#visitStartDate').val('');
+            $('#visitEndDate').val('');
+            $('#completedSatisfactionFilter').val('');
+            completedFilters = { startDate: '', endDate: '', satisfaction: '' };
+            completedPagination.currentPage = 1;
+            renderCompletedTable();
+        });
+
+        // 待回访分页点击
+        $(document).on('click', '#pendingPagination .page-link', function(e) {
+            e.preventDefault();
+            const page = $(this).data('page');
+            if (page && page !== pendingPagination.currentPage && page >= 1) {
+                pendingPagination.currentPage = page;
+                renderPendingTable();
+            }
+        });
+
+        // 已回访分页点击
+        $(document).on('click', '#completedPagination .page-link', function(e) {
+            e.preventDefault();
+            const page = $(this).data('page');
+            if (page && page !== completedPagination.currentPage && page >= 1) {
+                completedPagination.currentPage = page;
+                renderCompletedTable();
+            }
+        });
+
+        // 导出个人回访记录
+        $('#exportVisitBtn').click(function() {
+            const filteredData = filterCompletedVisitData();
+            if (filteredData.length === 0) {
+                alert('没有可导出的数据');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+            const exportData = [
+                ['回访日期', '服务对象', '护理员', '回访类型', '满意度', '服务对象要求', '现场检查描述']
+            ];
+
+            filteredData.forEach(visit => {
+                exportData.push([
+                    visit.visit_time,
+                    visit.client_name,
+                    visit.nurse,
+                    visit.visit_type,
+                    visit.satisfaction_text,
+                    visit.client_req || '无',
+                    visit.visit_desc || '无'
+                ]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(exportData);
+            ws['!cols'] = [
+                { wch: 20 }, // 回访日期
+                { wch: 12 }, // 服务对象
+                { wch: 10 }, // 护理员
+                { wch: 12 }, // 回访类型
+                { wch: 12 }, // 满意度
+                { wch: 30 }, // 服务对象要求
+                { wch: 40 }  // 现场检查描述
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, '个人回访记录');
+            const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+            XLSX.writeFile(wb, `个人回访记录_${today}.xlsx`);
+        });
+
+        // 页面加载完成后初始化
+        $(function() {
+            // 设置回访日期默认值为当前日期
+            const today = new Date().toISOString().split('T')[0];
+            $('#visitDate').val(today);
+
+            // 照片上传相关变量
+            let uploadedPhotos = [];
+            const maxPhotos = 5;
+            const maxPhotoSize = 5 * 1024 * 1024; // 5MB
+
+            // 照片上传区域点击事件
+            $('#photoUploadArea').click(function() {
+                $('#photoInput').click();
+            });
+
+            // 照片选择事件
+            $('#photoInput').change(function(e) {
+                const files = e.target.files;
+                if (files.length === 0) return;
+
+                // 检查数量限制
+                if (uploadedPhotos.length + files.length > maxPhotos) {
+                    alert(`最多只能上传${maxPhotos}张照片，当前已上传${uploadedPhotos.length}张`);
+                    return;
+                }
+
+                // 处理选中的文件
+                Array.from(files).forEach(file => {
+                    // 检查文件大小
+                    if (file.size > maxPhotoSize) {
+                        alert(`文件 ${file.name} 大小超过5MB，已跳过`);
+                        return;
+                    }
+
+                    // 检查文件类型
+                    if (!file.type.match('image/(jpeg|jpg|png)')) {
+                        alert(`文件 ${file.name} 格式不支持，仅支持JPG、PNG格式`);
+                        return;
+                    }
+
+                    // 读取文件
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        uploadedPhotos.push({
+                            id: Date.now() + Math.random(),
+                            file: file,
+                            url: event.target.result,
+                            name: file.name
+                        });
+                        renderPhotoPreview();
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                // 清空input，允许重复选择同一文件
+                $(this).val('');
+            });
+
+            // 渲染照片预览
+            function renderPhotoPreview() {
+                const container = $('#photoPreviewContainer');
+                container.empty();
+
+                uploadedPhotos.forEach((photo, index) => {
+                    const previewItem = $('<div class="photo-preview-item"></div>');
+                    previewItem.html(`
+                        <img src="${photo.url}" alt="${photo.name}">
+                        <button type="button" class="photo-remove" data-index="${index}">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    `);
+                    container.append(previewItem);
+                });
+            }
+
+            // 删除照片
+            $(document).on('click', '.photo-remove', function() {
+                const index = $(this).data('index');
+                uploadedPhotos.splice(index, 1);
+                renderPhotoPreview();
+            });
+
+            // 执行回访按钮点击事件
+            $('.execute-visit-btn').click(function() {
+                const data = $(this).data();
+                
+                // 填充表单数据
+                $('#visitFormName').text(data.name);
+                $('#visitObjectName').val(data.name);
+                $('#visitObjectIdcard').val(data.idcard);
+                $('#visitNurse').val(data.nurse);
+                $('#clientReq').val('');
+                $('#visitDesc').val('');
+                $('#reqWordCount').text('0');
+                $('#descWordCount').text('0');
+                
+                // 清空照片
+                uploadedPhotos = [];
+                renderPhotoPreview();
+                
+                // 重置满意度单选按钮
+                $('input[name="satisfaction"]').prop('checked', false);
+                // 禁用提交按钮
+                $('#submitVisitBtn').prop('disabled', true);
+                
+                // 显示弹窗
+                $('#visitFormModal').modal('show');
+            });
+
+            // 满意度单选按钮变化事件
+            $('input[name="satisfaction"]').change(function() {
+                // 只要选中一个满意度，就启用提交按钮
+                const isChecked = $('input[name="satisfaction"]:checked').length > 0;
+                $('#submitVisitBtn').prop('disabled', !isChecked);
+            });
+
+            // 服务对象要求输入框字数统计
+            $('#clientReq').on('input', function() {
+                const text = $(this).val();
+                const length = text.length;
+                $('#reqWordCount').text(length);
+                
+                // 超过254字时截取
+                if (length > 254) {
+                    $(this).val(text.substring(0, 254));
+                    $('#reqWordCount').text('254');
+                }
+            });
+
+            // 现场检查描述输入框字数统计
+            $('#visitDesc').on('input', function() {
+                const text = $(this).val();
+                const length = text.length;
+                $('#descWordCount').text(length);
+                
+                // 超过254字时截取
+                if (length > 254) {
+                    $(this).val(text.substring(0, 254));
+                    $('#descWordCount').text('254');
+                }
+            });
+
+            // 提交回访记录按钮点击事件
+            $('#submitVisitBtn').click(function() {
+                const btn = $(this);
+                const executeBtn = $('.execute-visit-btn[data-id]').filter(function() {
+                    return $(this).data('name') === $('#visitObjectName').val();
+                }).first();
+                
+                if (executeBtn.length === 0) {
+                    alert('无法获取回访记录ID');
+                    return;
+                }
+
+                const visitData = {
+                    client_id: executeBtn.data('client-id'),
+                    alloc_time: executeBtn.data('alloc-time'),
+                    op_id: getCurrentUserId(), // 当前登录用户ID，需要从session或全局变量获取
+                    visit_type: 1, // 1-线上, 2-线下
+                    op_time: new Date().toISOString().slice(0, 19).replace('T', ' '), // 执行回访时间
+                    satisfaction: parseInt($('input[name="satisfaction"]:checked').val()),
+                    client_req: $('#clientReq').val().trim(),
+                    visit_desc: $('#visitDesc').val().trim(),
+                    photos: uploadedPhotos.map(p => ({
+                        name: p.name,
+                        data: p.url // base64格式，实际项目中应该上传到服务器后返回URL
+                    }))
+                };
+
+                // 验证必填项
+                if (!visitData.satisfaction) {
+                    alert('请选择满意度');
+                    return;
+                }
+
+                // 禁用提交按钮，防止重复提交
+                btn.prop('disabled', true).text('提交中...');
+
+                // 实际项目中，这里需要发送AJAX请求到后端保存数据
+                // 示例代码：
+                /*
+                $.ajax({
+                    url: '/api/visit/save',
+                    method: 'POST',
+                    data: JSON.stringify(visitData),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        if (response.success) {
+                            alert(`已成功提交 ${$('#visitObjectName').val()} 的回访记录！`);
+                            $('#visitFormModal').modal('hide');
+                            // 刷新待回访列表
+                            loadPendingVisitList();
+                        } else {
+                            alert('提交失败：' + response.message);
+                            btn.prop('disabled', false).text('提交');
+                        }
+                    },
+                    error: function() {
+                        alert('提交失败，请稍后重试');
+                        btn.prop('disabled', false).text('提交');
+                    }
+                });
+                */
+
+                // 模拟提交成功
+                setTimeout(function() {
+                    alert(`已成功提交 ${$('#visitObjectName').val()} 的回访记录！\n满意度：${getSatisfactionText(visitData.satisfaction)}\n服务对象要求：${visitData.client_req || '无'}\n现场检查描述：${visitData.visit_desc || '无'}\n上传照片：${uploadedPhotos.length}张`);
+                    
+                    // 关闭弹窗
+                    $('#visitFormModal').modal('hide');
+                    
+                    // 重置表单
+                    btn.prop('disabled', false).text('提交');
+                    
+                    // 模拟刷新待回访列表（实际项目中应重新从后端获取数据）
+                    // loadPendingVisitList();
+                }, 500);
+            });
+
+            // 获取当前用户ID（实际项目中应从session或全局变量获取）
+            function getCurrentUserId() {
+                // 这里应该从实际的用户会话中获取
+                // 示例：return window.currentUser.id;
+                return 1; // 临时返回固定值
+            }
+
+            // 导出回访记录按钮点击事件
+            $('#exportVisitBtn').click(function() {
+                alert('正在导出个人回访记录...\n导出文件格式：CSV\n包含字段：回访日期、服务对象、护理员、满意度、补充说明');
+                // 实际项目中，这里需要发送AJAX请求到后端生成导出文件
+            });
+
+            // 辅助函数：根据满意度值获取显示文本
+            function getSatisfactionText(value) {
+                switch(parseInt(value)) {
+                    case 1: return '非常满意';
+                    case 2: return '满意';
+                    case 3: return '一般';
+                    case 4: return '不满意';
+                    default: return '';
+                }
+            }
+
+            // 查看详情按钮点击事件（已回访列表）
+            $(document).on('click', '.view-detail-btn', function() {
+                const id = $(this).data('id');
+                const visit = allCompletedVisitData.find(v => v.id === id);
+                if (visit) {
+                    alert(`回访记录详情\n\n回访时间：${visit.visit_time}\n服务对象：${visit.client_name}\n护理员：${visit.nurse}\n回访类型：${visit.visit_type}\n满意度：${visit.satisfaction_text}\n服务对象要求：${visit.client_req || '无'}\n现场检查描述：${visit.visit_desc || '无'}`);
+                } else {
+                    alert('查看回访记录详情（ID: ' + id + '）\n实际项目中应打开详情弹窗显示完整信息');
+                }
+            });
+
+            // 初始化：渲染表格
+            renderPendingTable();
+            renderCompletedTable();
+        });
+    </script>
+</body>
+</html>
