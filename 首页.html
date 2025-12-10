@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 - 居家长护业务管理系统</title>
+    <!-- 引入外部资源 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        /* 全局样式 */
+        body { font-family: "微软雅黑", "思源黑体", sans-serif; background-color: #f5f7fa; color: #333; }
+        .btn-primary { background-color: #1890FF; border-color: #1890FF; }
+        .btn-primary:hover { background-color: #096DD9; border-color: #096DD9; }
+        .text-primary { color: #1890FF !important; }
+        .text-success { color: #52C41A !important; }
+        .text-warning { color: #FAAD14 !important; }
+        .text-danger { color: #FF4D4F !important; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .card-header { background: #fff; border-bottom: 1px solid #f0f0f0; border-radius: 12px 12px 0 0; padding: 15px 20px; }
+        .card-body { padding: 20px; }
+        /* 布局样式 */
+        .app-container { display: flex; min-height: 100vh; }
+        /* 侧边导航 */
+        .sidebar { width: 220px; background: #fff; box-shadow: 1px 0 2px rgba(0,0,0,0.05); padding: 20px 0; flex-shrink: 0; }
+        .sidebar-logo { text-align: center; padding: 0 20px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; }
+        .sidebar-logo img { height: 40px; margin-bottom: 8px; }
+        .sidebar-logo h3 { font-size: 16px; color: #1890FF; font-weight: 600; margin: 0; }
+        .nav-menu { list-style: none; padding: 0; margin: 0; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link { display: flex; align-items: center; padding: 12px 20px; color: #666; text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+        .nav-link:hover, .nav-link.active { color: #1890FF; background-color: #f0f7ff; border-left: 3px solid #1890FF; }
+        .nav-link i { font-size: 18px; margin-right: 12px; width: 20px; text-align: center; }
+        /* 主内容区 */
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
+        /* 顶部导航 */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .page-title { font-size: 20px; font-weight: 600; color: #333; margin: 0; }
+        .user-info { display: flex; align-items: center; }
+        .notification { position: relative; margin-right: 20px; cursor: pointer; }
+        .notification i { font-size: 20px; color: #666; }
+        .notification-badge { position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; background: #FF4D4F; color: #fff; border-radius: 50%; font-size: 12px; text-align: center; line-height: 18px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #1890FF; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; margin-right: 10px; }
+        .user-name { font-size: 14px; font-weight: 500; }
+        /* 待办统计卡片 */
+        .todo-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+        .stat-card { padding: 20px; text-align: center; }
+        .stat-number { font-size: 28px; font-weight: 700; margin: 10px 0; }
+        .stat-desc { font-size: 14px; color: #666; }
+        /* 快速入口 */
+        .quick-entrance { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .entrance-card { padding: 25px 15px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .entrance-card:hover { transform: translateY(-5px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        .entrance-icon { width: 50px; height: 50px; border-radius: 50%; background: #f0f7ff; color: #1890FF; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 10px; }
+        .entrance-name { font-size: 14px; font-weight: 500; }
+        /* 评估安排列表 */
+        .schedule-table th { font-size: 14px; font-weight: 600; color: #666; }
+        .schedule-table td { font-size: 13px; vertical-align: middle; }
+        .btn-sm { padding: 4px 12px; font-size: 12px; border-radius: 6px; }
+        /* 线索列表样式 */
+        .clue-table th { font-size: 13px; font-weight: 600; color: #666; text-align: center; vertical-align: middle; }
+        .clue-table td { font-size: 13px; vertical-align: middle; text-align: center; }
+        .clue-table .text-left { text-align: left; }
+        /* 弹窗样式 */
+        .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-body { font-size: 13px; }
+        .modal-footer { padding: 10px 20px; border-top: 1px solid #f0f0f0; }
+        .form-label { font-size: 13px; font-weight: 500; margin-bottom: 8px; }
+        .form-control, .form-select { border-radius: 8px; border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
+        /* 导入结果样式 */
+        .import-result { max-height: 300px; overflow-y: auto; margin-top: 10px; }
+        .result-item { padding: 8px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; }
+        .result-item .error { color: #FF4D4F; }
+        .form-hint { margin-top: 5px; font-size: 12px; color: #999; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边导航 -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="https://via.placeholder.com/80x40?text=居家长护" alt="系统Logo">
+                <h3>评估员工作平台</h3>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="首页.html" class="nav-link active">
+                        <i class="fa fa-home"></i>
+                        <span>首页</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="线索管理页.html" class="nav-link">
+                        <i class="fa fa-list-alt"></i>
+                        <span>评估线索管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="服务协议或计划打印.html" class="nav-link">
+                        <i class="fa fa-stethoscope"></i>
+                        <span>服务协议或计划打印</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="线上回访.html" class="nav-link">
+                        <i class="fa fa-upload"></i>
+                        <span>线上回访执行</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 顶部导航 -->
+            <div class="top-nav">
+                <h1 class="page-title">工作台</h1>
+                <div class="user-info">
+                    <div class="notification">
+                        <i class="fa fa-bell-o"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-avatar">张</div>
+                    <span class="user-name">张三（评估员）</span>
+                </div>
+            </div>
+
+            <!-- 待办任务统计 -->
+            <div class="todo-stats">
+                <div class="card stat-card">
+                    <div class="stat-desc">待处理线索</div>
+                    <div class="stat-number text-primary">12</div>
+                    <a href="线索管理页.html" class="text-primary fs-12">查看全部 →</a>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-desc">待提交材料</div>
+                    <div class="stat-number text-warning">5</div>
+                    <a href="线索管理页.html" class="text-warning fs-12">查看全部 →</a>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-desc">待签字确认</div>
+                    <div class="stat-number text-danger">2</div>
+                    <a href="线索管理页.html" class="text-danger fs-12">查看全部 →</a>
+                </div>
+            </div>
+
+            <!-- 今日评估安排 -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">今日评估安排（2024-05-20）</h5>
+                    <button class="btn btn-sm btn-primary" id="exportTodayList"><i class="fa fa-download"></i> 导出今日清单</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>评估对象</th>
+                                    <th>社区/村镇</th>
+                                    <th>预约时间</th>
+                                    <th>评估等级</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>李四</td>
+                                    <td>西湖区XX社区</td>
+                                    <td>09:00-10:00</td>
+                                    <td>二级护理</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary view-detail-btn" 
+                                                data-id="1"
+                                                data-name="李四"
+                                                data-gender="男"
+                                                data-idcard="330101199001011234"
+                                                data-address="西湖区XX街道XX小区3栋502室"
+                                                data-phone="13812345678"
+                                                data-family="李五"
+                                                data-family-phone="13912345678"
+                                                data-relationship="父子"
+                                                data-medical-insurance="职工医保"
+                                                data-disability-level="二级"
+                                                data-is-low-income="否"
+                                                data-disability-reason="疾病"
+                                                data-description="服务对象因疾病导致行动不便，需要长期护理服务">
+                                            查看详情
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary ms-1 navigate-btn" 
+                                                data-name="李四"
+                                                data-address="西湖区XX街道XX小区3栋502室">
+                                            导航前往
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>王五</td>
+                                    <td>上城区XX村镇</td>
+                                    <td>14:00-15:30</td>
+                                    <td>一级护理</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary view-detail-btn" 
+                                                data-id="2"
+                                                data-name="王五"
+                                                data-gender="女"
+                                                data-idcard="330102199002021234"
+                                                data-address="上城区XX镇XX村2组15号"
+                                                data-phone="13912345678"
+                                                data-family="王六"
+                                                data-family-phone="13712345678"
+                                                data-relationship="母女"
+                                                data-medical-insurance="城乡居民医保"
+                                                data-disability-level="一级"
+                                                data-is-low-income="是"
+                                                data-disability-reason="年老"
+                                                data-description="服务对象因年老体弱，生活自理能力下降，需要日常护理服务">
+                                            查看详情
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary ms-1 navigate-btn" 
+                                                data-name="王五"
+                                                data-address="上城区XX镇XX村2组15号">
+                                            导航前往
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>赵六</td>
+                                    <td>拱墅区XX社区</td>
+                                    <td>16:00-17:00</td>
+                                    <td>三级护理</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary view-detail-btn" 
+                                                data-id="3"
+                                                data-name="赵六"
+                                                data-gender="男"
+                                                data-idcard="330103199003031234"
+                                                data-address="拱墅区XX路XX号XX公寓2单元301室"
+                                                data-phone="13712345678"
+                                                data-family="赵七"
+                                                data-family-phone="13612345678"
+                                                data-relationship="兄弟"
+                                                data-medical-insurance="职工医保"
+                                                data-disability-level="三级"
+                                                data-is-low-income="否"
+                                                data-disability-reason="意外"
+                                                data-description="服务对象因意外事故导致行动不便，需要专业护理服务">
+                                            查看详情
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary ms-1 navigate-btn" 
+                                                data-name="赵六"
+                                                data-address="拱墅区XX路XX号XX公寓2单元301室">
+                                            导航前往
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 线索列表 -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">我的评估线索（按分配时间倒序）</h5>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary" id="downloadTemplate"><i class="fa fa-download"></i> 下载自行摸排线索模板</button>
+                        <button class="btn btn-sm btn-primary ms-2" id="importClues"><i class="fa fa-upload"></i> 导入自行摸排线索</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover clue-table">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>姓名</th>
+                                    <th>身份证号</th>
+                                    <th>家属姓名</th>
+                                    <th>联系电话</th>
+                                    <th>社区/村镇</th>
+                                    <th class="text-left">地址</th>
+                                    <th>线索来源</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clueTableBody">
+                                <tr>
+                                    <td>2024-05-20</td>
+                                    <td>李四</td>
+                                    <td>330101********1234</td>
+                                    <td>李五</td>
+                                    <td>138****1234</td>
+                                    <td>西湖区XX社区</td>
+                                    <td class="text-left">西湖区XX街道XX小区3栋502室</td>
+                                    <td><span class="badge bg-info">社区</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary edit-clue-btn" 
+                                                data-id="1" 
+                                                data-date="2024-05-20"
+                                                data-name="李四" 
+                                                data-idcard="330101********1234" 
+                                                data-family="李五" 
+                                                data-phone="13812345678" 
+                                                data-community="西湖区XX社区" 
+                                                data-address="西湖区XX街道XX小区3栋502室" 
+                                                data-source="社区"
+                                                data-remark="">
+                                            <i class="fa fa-edit"></i> 编辑
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2024-05-19</td>
+                                    <td>王五</td>
+                                    <td>330102********5678</td>
+                                    <td>王六</td>
+                                    <td>139****5678</td>
+                                    <td>上城区XX村镇</td>
+                                    <td class="text-left">上城区XX镇XX村2组15号</td>
+                                    <td><span class="badge bg-success">医保</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary edit-clue-btn" 
+                                                data-id="2" 
+                                                data-date="2024-05-19"
+                                                data-name="王五" 
+                                                data-idcard="330102********5678" 
+                                                data-family="王六" 
+                                                data-phone="13912345678" 
+                                                data-community="上城区XX村镇" 
+                                                data-address="上城区XX镇XX村2组15号" 
+                                                data-source="医保"
+                                                data-remark="">
+                                            <i class="fa fa-edit"></i> 编辑
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2024-05-18</td>
+                                    <td>赵六</td>
+                                    <td>330103********9012</td>
+                                    <td>赵七</td>
+                                    <td>137****9012</td>
+                                    <td>拱墅区XX社区</td>
+                                    <td class="text-left">拱墅区XX路XX号XX公寓2单元301室</td>
+                                    <td><span class="badge bg-warning">自行摸排</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary edit-clue-btn" 
+                                                data-id="3" 
+                                                data-date="2024-05-18"
+                                                data-name="赵六" 
+                                                data-idcard="330103********9012" 
+                                                data-family="赵七" 
+                                                data-phone="13712345678" 
+                                                data-community="拱墅区XX社区" 
+                                                data-address="拱墅区XX路XX号XX公寓2单元301室" 
+                                                data-source="自行摸排"
+                                                data-remark="需周末上门评估">
+                                            <i class="fa fa-edit"></i> 编辑
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速功能入口 -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">快速功能</h5>
+                </div>
+                <div class="card-body">
+                    <div class="quick-entrance">
+                        <div class="card entrance-card" onclick="window.location.href='线索管理页.html'">
+                            <div class="entrance-icon">
+                                <i class="fa fa-plus"></i>
+                            </div>
+                            <div class="entrance-name">查看评估线索</div>
+                        </div>
+                        <div class="card entrance-card" onclick="window.location.href='线索管理页.html'">
+                            <div class="entrance-icon">
+                                <i class="fa fa-folder-open-o"></i>
+                            </div>
+                            <div class="entrance-name">新增评估线索</div>
+                        </div>
+                        <div class="card entrance-card" onclick="window.location.href='服务协议或计划打印.html'">
+                            <div class="entrance-icon">
+                                <i class="fa fa-pencil"></i>
+                            </div>
+                            <div class="entrance-name">服务协议或计划打印</div>
+                        </div>
+                        <div class="card entrance-card" onclick="window.location.href='线上回访.html'">
+                            <div class="entrance-icon">
+                                <i class="fa fa-file-image-o"></i>
+                            </div>
+                            <div class="entrance-name">线上回访</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 评估详情弹窗 -->
+    <div class="modal fade" id="assessmentDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">评估对象详情 - <span id="detailNameDisplay">李四</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">姓名</label>
+                                <div class="form-control-plaintext" id="detailName">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">性别</label>
+                                <div class="form-control-plaintext" id="detailGender">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">身份证号</label>
+                                <div class="form-control-plaintext" id="detailIdCard">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">地址</label>
+                                <div class="form-control-plaintext" id="detailAddress">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">服务对象联系电话</label>
+                                <div class="form-control-plaintext" id="detailPhone">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">家属姓名</label>
+                                <div class="form-control-plaintext" id="detailFamily">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">家属联系电话</label>
+                                <div class="form-control-plaintext" id="detailFamilyPhone">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">关系</label>
+                                <div class="form-control-plaintext" id="detailRelationship">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">医保类型</label>
+                                <div class="form-control-plaintext" id="detailMedicalInsurance">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">残疾等级</label>
+                                <div class="form-control-plaintext" id="detailDisabilityLevel">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">是否低保户</label>
+                                <div class="form-control-plaintext" id="detailIsLowIncome">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">失能原因</label>
+                                <div class="form-control-plaintext" id="detailDisabilityReason">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">情况说明</label>
+                                <div class="form-control-plaintext" id="detailDescription" style="min-height: 60px; white-space: pre-wrap;">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导航弹窗 -->
+    <div class="modal fade" id="navigateModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="fa fa-map-marker fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="mb-3">正在跳转到导航软件</h5>
+                    <p class="text-muted mb-0">请稍候...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导出弹窗 -->
+    <div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="fa fa-spinner fa-spin fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="mb-3">正在导出今日清单</h5>
+                    <p class="text-muted mb-0">请稍候...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑线索弹窗 -->
+    <div class="modal fade" id="editClueModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">编辑评估线索 - <span id="editNameDisplay">李四</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editClueForm">
+                        <input type="hidden" id="editId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">姓名 <span class="text-muted" style="font-size: 11px;">(不可修改，需联系机构管理员)</span></label>
+                                    <input type="text" class="form-control" id="editNameInput" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">身份证号 <span class="text-muted" style="font-size: 11px;">(不可修改，需联系机构管理员)</span></label>
+                                    <input type="text" class="form-control" id="editIdCardInput" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">家属姓名</label>
+                                    <input type="text" class="form-control" id="editFamilyInput">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">联系电话 <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="editPhoneInput" placeholder="请输入11位联系电话" maxlength="11">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">社区/村镇</label>
+                                    <input type="text" class="form-control" id="editCommunityInput">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">线索来源</label>
+                                    <input type="text" class="form-control" id="editSourceInput" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">详细地址 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="editAddressInput" placeholder="请输入详细地址">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">备注</label>
+                                    <textarea class="form-control" id="editRemarkInput" rows="3" placeholder="如：需周末上门评估"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="saveClueEdit">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入线索弹窗 -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">导入自行摸排线索</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="importForm">
+                        <div class="mb-3">
+                            <label class="form-label">上传Excel文件 <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="excelFile" accept=".xlsx, .xls" required>
+                            <div class="form-hint">
+                                请下载模板并按格式填写，支持.xlsx和.xls格式，单次最多导入1000条
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="submitImport">开始导入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入结果弹窗 -->
+    <div class="modal fade" id="importResultModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">导入结果</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center; margin-bottom: 15px; padding: 15px; background: #f5f7fa; border-radius: 8px;">
+                        <p style="margin: 5px 0; font-size: 16px;">成功导入 <span class="text-success" id="successCount" style="font-weight: 700; font-size: 18px;">0</span> 条线索</p>
+                        <p style="margin: 5px 0; font-size: 16px;">失败导入 <span class="text-danger" id="failCount" style="font-weight: 700; font-size: 18px;">0</span> 条线索</p>
+                    </div>
+                    <div id="importResultContent" class="import-result" style="display: none;">
+                        <h6 style="font-size: 14px; margin-bottom: 10px;">失败详情：</h6>
+                        <div id="errorList"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="downloadErrorReport" style="display: none;">下载错误报告</button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="reImport" style="display: none;">重新导入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        // 保存导入结果（用于错误报告下载）
+        let lastImportResults = null;
+
+        // 模拟线索数据（实际应从后端获取）
+        let clueData = [
+            {
+                id: 1,
+                date: '2024-05-20',
+                name: '李四',
+                idcard: '330101********1234',
+                family: '李五',
+                phone: '13812345678',
+                community: '西湖区XX社区',
+                address: '西湖区XX街道XX小区3栋502室',
+                source: '社区',
+                remark: '',
+                assignTime: '2024-05-20 09:00:00'
+            },
+            {
+                id: 2,
+                date: '2024-05-19',
+                name: '王五',
+                idcard: '330102********5678',
+                family: '王六',
+                phone: '13912345678',
+                community: '上城区XX村镇',
+                address: '上城区XX镇XX村2组15号',
+                source: '医保',
+                remark: '',
+                assignTime: '2024-05-19 14:30:00'
+            },
+            {
+                id: 3,
+                date: '2024-05-18',
+                name: '赵六',
+                idcard: '330103********9012',
+                family: '赵七',
+                phone: '13712345678',
+                community: '拱墅区XX社区',
+                address: '拱墅区XX路XX号XX公寓2单元301室',
+                source: '自行摸排',
+                remark: '需周末上门评估',
+                assignTime: '2024-05-18 10:15:00'
+            }
+        ];
+
+        // 通知点击事件
+        $('.notification').click(function() {
+            alert('您有3条新通知：\n1. 平台管理员更新了服务计划格式\n2. 医保局驳回了1条评估材料，请修改后重新提交\n3. 新分配了5条评估线索');
+        });
+
+        // 查看详情按钮点击事件
+        $(document).on('click', '.view-detail-btn', function() {
+            const data = $(this).data();
+            
+            // 填充详情弹窗数据
+            $('#detailNameDisplay').text(data.name || '-');
+            $('#detailName').text(data.name || '-');
+            $('#detailGender').text(data.gender || '-');
+            $('#detailIdCard').text(data.idcard || '-');
+            $('#detailAddress').text(data.address || '-');
+            $('#detailPhone').text(data.phone || '-');
+            $('#detailFamily').text(data.family || '-');
+            $('#detailFamilyPhone').text(data.familyPhone || '-');
+            $('#detailRelationship').text(data.relationship || '-');
+            $('#detailMedicalInsurance').text(data.medicalInsurance || '-');
+            $('#detailDisabilityLevel').text(data.disabilityLevel || '-');
+            $('#detailIsLowIncome').text(data.isLowIncome || '-');
+            $('#detailDisabilityReason').text(data.disabilityReason || '-');
+            $('#detailDescription').text(data.description || '-');
+            
+            // 保存数据到sessionStorage，以便在目标页面显示弹窗
+            sessionStorage.setItem('showAssessmentDetail', 'true');
+            sessionStorage.setItem('assessmentDetailData', JSON.stringify({
+                name: data.name,
+                gender: data.gender,
+                idcard: data.idcard,
+                address: data.address,
+                phone: data.phone,
+                family: data.family,
+                familyPhone: data.familyPhone,
+                relationship: data.relationship,
+                medicalInsurance: data.medicalInsurance,
+                disabilityLevel: data.disabilityLevel,
+                isLowIncome: data.isLowIncome,
+                disabilityReason: data.disabilityReason,
+                description: data.description
+            }));
+            
+            // 跳转到线索管理页
+            window.location.href = '线索管理页.html';
+        });
+
+        // 导航前往按钮点击事件
+        $(document).on('click', '.navigate-btn', function() {
+            const data = $(this).data();
+            
+            // 显示导航弹窗
+            const navigateModal = new bootstrap.Modal(document.getElementById('navigateModal'));
+            navigateModal.show();
+            
+            // 模拟导航跳转（实际项目中可以调用地图API）
+            setTimeout(function() {
+                navigateModal.hide();
+                // 这里可以实际调用导航API，例如：
+                // window.open('https://uri.amap.com/navigation?to=' + encodeURIComponent(data.address), '_blank');
+                alert('导航功能：\n评估对象：' + data.name + '\n地址：' + data.address);
+            }, 2000);
+        });
+
+        // 导出今日清单按钮点击事件
+        $('#exportTodayList').click(function() {
+            // 显示导出弹窗
+            const exportModal = new bootstrap.Modal(document.getElementById('exportModal'));
+            exportModal.show();
+            
+            // 模拟导出过程
+            setTimeout(function() {
+                exportModal.hide();
+                alert('今日清单导出成功！');
+                // 实际项目中可以触发文件下载
+            }, 2000);
+        });
+
+        // 编辑线索按钮点击事件
+        $(document).on('click', '.edit-clue-btn', function() {
+            const data = $(this).data();
+            $('#editId').val(data.id);
+            $('#editNameDisplay').text(data.name);
+            $('#editNameInput').val(data.name);
+            $('#editIdCardInput').val(data.idcard);
+            $('#editFamilyInput').val(data.family || '');
+            $('#editPhoneInput').val(data.phone || '');
+            $('#editCommunityInput').val(data.community || '');
+            $('#editAddressInput').val(data.address || '');
+            $('#editSourceInput').val(data.source || '');
+            $('#editRemarkInput').val(data.remark || '');
+            
+            const editModal = new bootstrap.Modal(document.getElementById('editClueModal'));
+            editModal.show();
+        });
+
+        // 保存线索编辑
+        $('#saveClueEdit').click(function() {
+            const id = $('#editId').val();
+            const phone = $('#editPhoneInput').val().trim();
+            const address = $('#editAddressInput').val().trim();
+            const family = $('#editFamilyInput').val().trim();
+            const community = $('#editCommunityInput').val().trim();
+            const remark = $('#editRemarkInput').val().trim();
+            
+            // 校验
+            if (!phone) {
+                alert('请输入联系电话');
+                $('#editPhoneInput').focus();
+                return;
+            }
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                alert('请输入有效的11位联系电话');
+                $('#editPhoneInput').focus();
+                return;
+            }
+            if (!address) {
+                alert('请输入详细地址');
+                $('#editAddressInput').focus();
+                return;
+            }
+            
+            // 更新数据
+            const clue = clueData.find(c => c.id == id);
+            if (clue) {
+                clue.phone = phone;
+                clue.address = address;
+                clue.family = family;
+                clue.community = community;
+                clue.remark = remark;
+                
+                // 更新表格显示
+                updateClueTable();
+                
+                // 模拟同步到手机端
+                console.log('同步到手机端：', clue);
+            }
+            
+            alert('线索编辑成功！已同步至手机端"评估线索查看"列表');
+            bootstrap.Modal.getInstance(document.getElementById('editClueModal')).hide();
+        });
+
+        // 更新线索表格
+        function updateClueTable() {
+            // 按分配时间倒序排序
+            const sortedData = [...clueData].sort((a, b) => {
+                return new Date(b.assignTime) - new Date(a.assignTime);
+            });
+            
+            const tbody = $('#clueTableBody');
+            tbody.empty();
+            
+            sortedData.forEach(clue => {
+                const sourceBadge = clue.source === '社区' ? 'bg-info' : 
+                                   clue.source === '医保' ? 'bg-success' : 'bg-warning';
+                const phoneDisplay = clue.phone.length === 11 ? 
+                    clue.phone.substring(0, 3) + '****' + clue.phone.substring(7) : clue.phone;
+                const idcardDisplay = clue.idcard.length > 8 ? 
+                    clue.idcard.substring(0, 6) + '********' + clue.idcard.substring(14) : clue.idcard;
+                
+                const row = `
+                    <tr>
+                        <td>${clue.date}</td>
+                        <td>${clue.name}</td>
+                        <td>${idcardDisplay}</td>
+                        <td>${clue.family || ''}</td>
+                        <td>${phoneDisplay}</td>
+                        <td>${clue.community || ''}</td>
+                        <td class="text-left">${clue.address}</td>
+                        <td><span class="badge ${sourceBadge}">${clue.source}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary edit-clue-btn" 
+                                    data-id="${clue.id}" 
+                                    data-date="${clue.date}"
+                                    data-name="${clue.name}" 
+                                    data-idcard="${clue.idcard}" 
+                                    data-family="${clue.family || ''}" 
+                                    data-phone="${clue.phone}" 
+                                    data-community="${clue.community || ''}" 
+                                    data-address="${clue.address}" 
+                                    data-source="${clue.source}"
+                                    data-remark="${clue.remark || ''}">
+                                <i class="fa fa-edit"></i> 编辑
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+
+        // 下载模板
+        $('#downloadTemplate').click(function() {
+            // 创建工作簿
+            const wb = XLSX.utils.book_new();
+            
+            // 定义表头（按照用户要求的顺序）
+            const headers = [
+                '姓名', 
+                '性别', 
+                '身份证号', 
+                '地址', 
+                '服务对象联系电话', 
+                '家属姓名', 
+                '家属联系电话', 
+                '关系', 
+                '医保类型', 
+                '残疾等级', 
+                '是否低保户', 
+                '失能原因', 
+                '情况说明'
+            ];
+            
+            // 创建工作表数据
+            const wsData = [headers];
+            
+            // 添加示例数据行（带说明）
+            const exampleRow = [
+                '张三', 
+                '男', 
+                '330101199001011234', 
+                '杭州市西湖区XX街道XX小区3栋502室', 
+                '13812345678', 
+                '张四', 
+                '13912345678', 
+                '父子', 
+                '职工医保', 
+                '二级', 
+                '是', 
+                '疾病', 
+                '服务对象因疾病导致行动不便，需要长期护理服务'
+            ];
+            wsData.push(exampleRow);
+            
+            // 创建工作表
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            // 设置列宽
+            ws['!cols'] = [
+                { wch: 10 }, // 姓名
+                { wch: 8 },  // 性别
+                { wch: 18 }, // 身份证号
+                { wch: 35 }, // 地址
+                { wch: 15 }, // 服务对象联系电话
+                { wch: 10 }, // 家属姓名
+                { wch: 15 }, // 家属联系电话
+                { wch: 10 }, // 关系
+                { wch: 12 }, // 医保类型
+                { wch: 10 }, // 残疾等级
+                { wch: 12 }, // 是否低保户
+                { wch: 12 }, // 失能原因
+                { wch: 40 }  // 情况说明
+            ];
+            
+            // 添加工作表到工作簿
+            XLSX.utils.book_append_sheet(wb, ws, '自行摸排线索模板');
+            
+            // 下载文件
+            XLSX.writeFile(wb, '自行摸排线索模板.xlsx');
+        });
+
+        // 导入线索
+        $('#importClues').click(function() {
+            $('#excelFile').val('');
+            const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+            importModal.show();
+        });
+
+        // 提交导入
+        $('#submitImport').click(function() {
+            const file = $('#excelFile')[0].files[0];
+            if (!file) {
+                alert('请选择Excel文件');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    
+                    if (jsonData.length < 2) {
+                        alert('Excel文件格式错误，至少需要表头和数据行');
+                        return;
+                    }
+                    
+                    // 验证表头
+                    const headers = jsonData[0];
+                    const expectedHeaders = ['日期', '姓名', '身份证号', '家属姓名', '联系电话', '社区/村镇', '地址', '备注'];
+                    const headerMatch = expectedHeaders.every((h, i) => headers[i] === h);
+                    
+                    if (!headerMatch) {
+                        alert('Excel表头格式不正确，请使用下载的模板');
+                        return;
+                    }
+                    
+                    // 处理数据
+                    const importResults = {
+                        success: [],
+                        failed: []
+                    };
+                    
+                    // 获取现有线索的身份证号+姓名组合（用于重复校验）
+                    const existingClues = new Set(clueData.map(c => c.idcard + '|' + c.name));
+                    
+                    for (let i = 1; i < jsonData.length; i++) {
+                        const row = jsonData[i];
+                        const rowNum = i + 1;
+                        
+                        // 跳过空行
+                        if (!row || row.every(cell => !cell || cell.toString().trim() === '')) {
+                            continue;
+                        }
+                        
+                        const clue = {
+                            date: row[0] ? String(row[0]).trim() : '',
+                            name: row[1] ? String(row[1]).trim() : '',
+                            idcard: row[2] ? String(row[2]).trim() : '',
+                            family: row[3] ? String(row[3]).trim() : '',
+                            phone: row[4] ? String(row[4]).trim() : '',
+                            community: row[5] ? String(row[5]).trim() : '',
+                            address: row[6] ? String(row[6]).trim() : '',
+                            remark: row[7] ? String(row[7]).trim() : ''
+                        };
+                        
+                        // 校验
+                        const errors = [];
+                        
+                        // 必填字段校验
+                        if (!clue.name) {
+                            errors.push('姓名为空');
+                        }
+                        if (!clue.idcard) {
+                            errors.push('身份证号为空');
+                        }
+                        if (!clue.phone) {
+                            errors.push('联系电话为空');
+                        } else if (!/^1[3-9]\d{9}$/.test(clue.phone)) {
+                            errors.push('联系电话格式错误（需为11位）');
+                        }
+                        
+                        // 重复校验
+                        const clueKey = clue.idcard + '|' + clue.name;
+                        if (existingClues.has(clueKey)) {
+                            errors.push('与已分配的线索重复（身份证号+姓名）');
+                        }
+                        
+                        if (errors.length > 0) {
+                            importResults.failed.push({
+                                row: rowNum,
+                                clue: clue,
+                                errors: errors
+                            });
+                        } else {
+                            // 添加新线索
+                            const newClue = {
+                                id: clueData.length > 0 ? Math.max(...clueData.map(c => c.id)) + 1 : 1,
+                                date: clue.date || new Date().toISOString().split('T')[0],
+                                name: clue.name,
+                                idcard: clue.idcard,
+                                family: clue.family,
+                                phone: clue.phone,
+                                community: clue.community,
+                                address: clue.address,
+                                source: '自行摸排',
+                                remark: clue.remark,
+                                assignTime: new Date().toISOString().replace('T', ' ').substring(0, 19)
+                            };
+                            
+                            clueData.push(newClue);
+                            existingClues.add(clueKey);
+                            importResults.success.push(newClue);
+                        }
+                    }
+                    
+                    // 保存导入结果
+                    lastImportResults = importResults;
+                    
+                    // 显示结果
+                    showImportResult(importResults);
+                    
+                    // 更新表格
+                    updateClueTable();
+                    
+                    // 关闭导入弹窗
+                    bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
+                    
+                } catch (error) {
+                    alert('文件读取失败：' + error.message);
+                    console.error(error);
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        });
+
+        // 显示导入结果
+        function showImportResult(results) {
+            const successCount = results.success.length;
+            const failCount = results.failed.length;
+            
+            $('#successCount').text(successCount);
+            $('#failCount').text(failCount);
+            
+            const errorList = $('#errorList');
+            errorList.empty();
+            
+            if (failCount > 0) {
+                $('#importResultContent').show();
+                $('#downloadErrorReport').show();
+                $('#reImport').show();
+                
+                results.failed.forEach(item => {
+                    const errorText = item.errors.join('、');
+                    const errorItem = `
+                        <div class="result-item">
+                            <span>第${item.row}行：</span>
+                            <span class="error">${errorText}</span>
+                        </div>
+                    `;
+                    errorList.append(errorItem);
+                });
+            } else {
+                $('#importResultContent').hide();
+                $('#downloadErrorReport').hide();
+                $('#reImport').hide();
+            }
+            
+            const resultModal = new bootstrap.Modal(document.getElementById('importResultModal'));
+            resultModal.show();
+        }
+
+        // 下载错误报告
+        $('#downloadErrorReport').click(function() {
+            if (!lastImportResults || lastImportResults.failed.length === 0) {
+                alert('没有错误数据可下载');
+                return;
+            }
+            
+            const wb = XLSX.utils.book_new();
+            const errorData = [
+                [
+                    '行号', 
+                    '姓名', 
+                    '性别', 
+                    '身份证号', 
+                    '地址', 
+                    '服务对象联系电话', 
+                    '家属姓名', 
+                    '家属联系电话', 
+                    '关系', 
+                    '医保类型', 
+                    '残疾等级', 
+                    '是否低保户', 
+                    '失能原因', 
+                    '情况说明', 
+                    '错误原因'
+                ]
+            ];
+            
+            // 填充实际的错误数据
+            lastImportResults.failed.forEach(item => {
+                const clue = item.clue;
+                errorData.push([
+                    item.row,
+                    clue.name || '',
+                    clue.gender || '',
+                    clue.idcard || '',
+                    clue.address || '',
+                    clue.phone || '',
+                    clue.family || '',
+                    clue.familyPhone || '',
+                    clue.relationship || '',
+                    clue.medicalInsurance || '',
+                    clue.disabilityLevel || '',
+                    clue.isLowIncome || '',
+                    clue.disabilityReason || '',
+                    clue.description || '',
+                    item.errors.join('；')
+                ]);
+            });
+            
+            const ws = XLSX.utils.aoa_to_sheet(errorData);
+            ws['!cols'] = [
+                { wch: 8 },  // 行号
+                { wch: 10 }, // 姓名
+                { wch: 8 },  // 性别
+                { wch: 18 }, // 身份证号
+                { wch: 35 }, // 地址
+                { wch: 15 }, // 服务对象联系电话
+                { wch: 10 }, // 家属姓名
+                { wch: 15 }, // 家属联系电话
+                { wch: 10 }, // 关系
+                { wch: 12 }, // 医保类型
+                { wch: 10 }, // 残疾等级
+                { wch: 12 }, // 是否低保户
+                { wch: 12 }, // 失能原因
+                { wch: 40 }, // 情况说明
+                { wch: 40 }  // 错误原因
+            ];
+            
+            XLSX.utils.book_append_sheet(wb, ws, '导入错误报告');
+            XLSX.writeFile(wb, '导入错误报告.xlsx');
+        });
+
+        // 重新导入
+        $('#reImport').click(function() {
+            bootstrap.Modal.getInstance(document.getElementById('importResultModal')).hide();
+            $('#excelFile').val('');
+            const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+            importModal.show();
+        });
+
+        // 初始化：按分配时间倒序显示
+        updateClueTable();
+    </script>
+</body>
+</html>
