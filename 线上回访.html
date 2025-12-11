@@ -902,8 +902,8 @@
                 renderPhotoPreview();
             });
 
-            // 执行回访按钮点击事件
-            $('.execute-visit-btn').click(function() {
+            // 执行回访按钮点击事件（使用事件委托，支持动态生成的按钮）
+            $(document).on('click', '.execute-visit-btn', function() {
                 const data = $(this).data();
                 
                 // 填充表单数据
@@ -926,7 +926,8 @@
                 $('#submitVisitBtn').prop('disabled', true);
                 
                 // 显示弹窗
-                $('#visitFormModal').modal('show');
+                const visitModal = new bootstrap.Modal(document.getElementById('visitFormModal'));
+                visitModal.show();
             });
 
             // 满意度单选按钮变化事件
@@ -1029,7 +1030,10 @@
                     alert(`已成功提交 ${$('#visitObjectName').val()} 的回访记录！\n满意度：${getSatisfactionText(visitData.satisfaction)}\n服务对象要求：${visitData.client_req || '无'}\n现场检查描述：${visitData.visit_desc || '无'}\n上传照片：${uploadedPhotos.length}张`);
                     
                     // 关闭弹窗
-                    $('#visitFormModal').modal('hide');
+                    const visitModal = bootstrap.Modal.getInstance(document.getElementById('visitFormModal'));
+                    if (visitModal) {
+                        visitModal.hide();
+                    }
                     
                     // 重置表单
                     btn.prop('disabled', false).text('提交');
@@ -1080,5 +1084,4 @@
         });
     </script>
 </body>
-
 </html>
