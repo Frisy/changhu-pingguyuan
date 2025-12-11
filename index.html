@@ -114,7 +114,7 @@
         <div class="main-content">
             <!-- 顶部导航 -->
             <div class="top-nav">
-                <h1 class="page-title">个人线上回访</h1>
+                <h1 class="page-title">工作台</h1>
                 <div class="user-info">
                     <div class="notification">
                         <i class="fa fa-bell-o"></i>
@@ -125,157 +125,281 @@
                 </div>
             </div>
 
-            <!-- 标签页 -->
-            <ul class="nav nav-tabs" id="visitTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">待回访</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab" aria-controls="completed" aria-selected="false">已回访</button>
-                </li>
-            </ul>
+            <!-- 待办任务统计 -->
+            <div class="todo-stats">
+                <div class="card stat-card">
+                    <div class="stat-desc">待处理线索</div>
+                    <div class="stat-number text-primary">12</div>
+                    <a href="线索管理页.html" class="text-primary fs-12">查看全部 →</a>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-desc">待提交材料</div>
+                    <div class="stat-number text-warning">5</div>
+                    <a href="线索管理页.html" class="text-warning fs-12">查看全部 →</a>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-desc">待签字确认</div>
+                    <div class="stat-number text-danger">2</div>
+                    <a href="线索管理页.html" class="text-danger fs-12">查看全部 →</a>
+                </div>
+            </div>
 
-            <!-- 标签页内容 -->
-            <div class="tab-content" id="visitTabContent">
-                <!-- 待回访标签页 -->
-                <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-                    <!-- 筛选区 -->
-                    <div class="filter-bar">
-                        <div class="filter-row">
-                            <div class="filter-item">
-                                <label class="filter-label">行政区域</label>
-                                <select class="form-select" id="pendingAreaFilter">
-                                    <option value="">全部区域</option>
-                                    <option value="越城区">越城区</option>
-                                    <option value="柯桥区">柯桥区</option>
-                                    <option value="上虞区">上虞区</option>
-                                </select>
-                            </div>
-                            <div class="filter-item">
-                                <label class="filter-label">护理员</label>
-                                <select class="form-select" id="pendingNurseFilter">
-                                    <option value="">全部护理员</option>
-                                    <option value="王五">王五</option>
-                                    <option value="钱七">钱七</option>
-                                    <option value="周九">周九</option>
-                                </select>
-                            </div>
-                            <div class="filter-item">
-                                <label class="filter-label">未回访时长</label>
-                                <select class="form-select" id="pendingDaysFilter">
-                                    <option value="">全部时长</option>
-                                    <option value="30">≥30天</option>
-                                    <option value="60">≥60天</option>
-                                </select>
-                            </div>
-                            <div class="filter-actions">
-                                <button class="btn btn-sm btn-primary" id="pendingSearchBtn"><i class="fa fa-search"></i> 查询</button>
-                                <button class="btn btn-sm btn-outline-secondary" id="pendingResetBtn"><i class="fa fa-refresh"></i> 重置</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 待回访列表 -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover visit-table">
-                                    <thead>
-                                        <tr>
-                                            <th>姓名</th>
-                                            <th>身份证号</th>
-                                            <th class="text-left">居住地址</th>
-                                            <th>家属联系电话</th>
-                                            <th>对应护理员</th>
-                                            <th>分配任务时间</th>
-                                            <th>上次回访时间</th>
-                                            <th>操作</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="pendingVisitTableBody">
-                                        <!-- 数据将通过JavaScript动态加载 -->
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- 分页 -->
-                            <div class="pagination-container">
-                                <nav aria-label="Page navigation example">
-                                    <ul class="pagination" id="pendingPagination">
-                                        <!-- 分页将通过JavaScript动态生成 -->
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
+            <!-- 今日评估安排 -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">今日评估安排（2024-05-20）</h5>
+                    <button class="btn btn-sm btn-primary" id="exportTodayList"><i class="fa fa-download"></i> 导出今日清单</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>评估对象</th>
+                                    <th>社区/村镇</th>
+                                    <th>预约时间</th>
+                                    <th>评估等级</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>李四</td>
+                                    <td>西湖区XX社区</td>
+                                    <td>09:00-10:00</td>
+                                    <td>二级护理</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary view-detail-btn" 
+                                                data-id="1"
+                                                data-name="李四"
+                                                data-gender="男"
+                                                data-idcard="330101199001011234"
+                                                data-address="西湖区XX街道XX小区3栋502室"
+                                                data-phone="13812345678"
+                                                data-family="李五"
+                                                data-family-phone="13912345678"
+                                                data-relationship="父子"
+                                                data-medical-insurance="职工医保"
+                                                data-disability-level="二级"
+                                                data-is-low-income="否"
+                                                data-disability-reason="疾病"
+                                                data-description="服务对象因疾病导致行动不便，需要长期护理服务">
+                                            查看详情
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary ms-1 navigate-btn" 
+                                                data-name="李四"
+                                                data-address="西湖区XX街道XX小区3栋502室">
+                                            导航前往
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>王五</td>
+                                    <td>上城区XX村镇</td>
+                                    <td>14:00-15:30</td>
+                                    <td>一级护理</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary view-detail-btn" 
+                                                data-id="2"
+                                                data-name="王五"
+                                                data-gender="女"
+                                                data-idcard="330102199002021234"
+                                                data-address="上城区XX镇XX村2组15号"
+                                                data-phone="13912345678"
+                                                data-family="王六"
+                                                data-family-phone="13712345678"
+                                                data-relationship="母女"
+                                                data-medical-insurance="城乡居民医保"
+                                                data-disability-level="一级"
+                                                data-is-low-income="是"
+                                                data-disability-reason="年老"
+                                                data-description="服务对象因年老体弱，生活自理能力下降，需要日常护理服务">
+                                            查看详情
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary ms-1 navigate-btn" 
+                                                data-name="王五"
+                                                data-address="上城区XX镇XX村2组15号">
+                                            导航前往
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>赵六</td>
+                                    <td>拱墅区XX社区</td>
+                                    <td>16:00-17:00</td>
+                                    <td>三级护理</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary view-detail-btn" 
+                                                data-id="3"
+                                                data-name="赵六"
+                                                data-gender="男"
+                                                data-idcard="330103199003031234"
+                                                data-address="拱墅区XX路XX号XX公寓2单元301室"
+                                                data-phone="13712345678"
+                                                data-family="赵七"
+                                                data-family-phone="13612345678"
+                                                data-relationship="兄弟"
+                                                data-medical-insurance="职工医保"
+                                                data-disability-level="三级"
+                                                data-is-low-income="否"
+                                                data-disability-reason="意外"
+                                                data-description="服务对象因意外事故导致行动不便，需要专业护理服务">
+                                            查看详情
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary ms-1 navigate-btn" 
+                                                data-name="赵六"
+                                                data-address="拱墅区XX路XX号XX公寓2单元301室">
+                                            导航前往
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </div>
 
-                <!-- 已回访标签页 -->
-                <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
-                    <!-- 筛选区 -->
-                    <div class="filter-bar">
-                        <div class="filter-row">
-                            <div class="filter-item">
-                                <label class="filter-label">回访日期范围</label>
-                                <input type="date" class="form-control" id="visitStartDate" placeholder="开始日期">
-                            </div>
-                            <div class="filter-item" style="min-width: 80px;">
-                                <label class="filter-label" style="visibility: hidden;">至</label>
-                                <input type="date" class="form-control" id="visitEndDate" placeholder="结束日期">
-                            </div>
-                            <div class="filter-item">
-                                <label class="filter-label">满意度</label>
-                                <select class="form-select" id="completedSatisfactionFilter">
-                                    <option value="">全部满意度</option>
-                                    <option value="1">非常满意</option>
-                                    <option value="2">满意</option>
-                                    <option value="3">一般</option>
-                                    <option value="4">不满意</option>
-                                </select>
-                            </div>
-                            <div class="filter-actions">
-                                <button class="btn btn-sm btn-primary" id="completedSearchBtn"><i class="fa fa-search"></i> 查询</button>
-                                <button class="btn btn-sm btn-outline-secondary" id="completedResetBtn"><i class="fa fa-refresh"></i> 重置</button>
-                            </div>
-                        </div>
+            <!-- 线索列表 -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">我的评估线索（按分配时间倒序）</h5>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary" id="downloadTemplate"><i class="fa fa-download"></i> 下载自行摸排线索模板</button>
+                        <button class="btn btn-sm btn-primary ms-2" id="importClues"><i class="fa fa-upload"></i> 导入自行摸排线索</button>
                     </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover clue-table">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>姓名</th>
+                                    <th>身份证号</th>
+                                    <th>家属姓名</th>
+                                    <th>联系电话</th>
+                                    <th>社区/村镇</th>
+                                    <th class="text-left">地址</th>
+                                    <th>线索来源</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clueTableBody">
+                                <tr>
+                                    <td>2024-05-20</td>
+                                    <td>李四</td>
+                                    <td>330101********1234</td>
+                                    <td>李五</td>
+                                    <td>138****1234</td>
+                                    <td>西湖区XX社区</td>
+                                    <td class="text-left">西湖区XX街道XX小区3栋502室</td>
+                                    <td><span class="badge bg-info">社区</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary edit-clue-btn" 
+                                                data-id="1" 
+                                                data-date="2024-05-20"
+                                                data-name="李四" 
+                                                data-idcard="330101********1234" 
+                                                data-family="李五" 
+                                                data-phone="13812345678" 
+                                                data-community="西湖区XX社区" 
+                                                data-address="西湖区XX街道XX小区3栋502室" 
+                                                data-source="社区"
+                                                data-remark="">
+                                            <i class="fa fa-edit"></i> 编辑
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2024-05-19</td>
+                                    <td>王五</td>
+                                    <td>330102********5678</td>
+                                    <td>王六</td>
+                                    <td>139****5678</td>
+                                    <td>上城区XX村镇</td>
+                                    <td class="text-left">上城区XX镇XX村2组15号</td>
+                                    <td><span class="badge bg-success">医保</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary edit-clue-btn" 
+                                                data-id="2" 
+                                                data-date="2024-05-19"
+                                                data-name="王五" 
+                                                data-idcard="330102********5678" 
+                                                data-family="王六" 
+                                                data-phone="13912345678" 
+                                                data-community="上城区XX村镇" 
+                                                data-address="上城区XX镇XX村2组15号" 
+                                                data-source="医保"
+                                                data-remark="">
+                                            <i class="fa fa-edit"></i> 编辑
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2024-05-18</td>
+                                    <td>赵六</td>
+                                    <td>330103********9012</td>
+                                    <td>赵七</td>
+                                    <td>137****9012</td>
+                                    <td>拱墅区XX社区</td>
+                                    <td class="text-left">拱墅区XX路XX号XX公寓2单元301室</td>
+                                    <td><span class="badge bg-warning">自行摸排</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary edit-clue-btn" 
+                                                data-id="3" 
+                                                data-date="2024-05-18"
+                                                data-name="赵六" 
+                                                data-idcard="330103********9012" 
+                                                data-family="赵七" 
+                                                data-phone="13712345678" 
+                                                data-community="拱墅区XX社区" 
+                                                data-address="拱墅区XX路XX号XX公寓2单元301室" 
+                                                data-source="自行摸排"
+                                                data-remark="需周末上门评估">
+                                            <i class="fa fa-edit"></i> 编辑
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- 已回访列表 -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover visit-table">
-                                    <thead>
-                                        <tr>
-                                            <th>执行回访时间</th>
-                                            <th>服务对象</th>
-                                            <th>护理员</th>
-                                            <th>回访类型</th>
-                                            <th>满意度</th>
-                                            <th class="text-left">服务对象要求</th>
-                                            <th class="text-left">现场检查描述</th>
-                                            <th>操作</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="completedVisitTableBody">
-                                        <!-- 数据将通过JavaScript动态加载 -->
-                                    </tbody>
-                                </table>
+            <!-- 快速功能入口 -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">快速功能</h5>
+                </div>
+                <div class="card-body">
+                    <div class="quick-entrance">
+                        <div class="card entrance-card" onclick="window.location.href='线索管理页.html'">
+                            <div class="entrance-icon">
+                                <i class="fa fa-plus"></i>
                             </div>
-
-                            <!-- 分页和导出按钮 -->
-                            <div class="pagination-container">
-                                <div class="filter-actions">
-                                    <button class="btn btn-sm btn-outline-primary" id="exportVisitBtn">
-                                        <i class="fa fa-download"></i> 导出个人回访记录
-                                    </button>
-                                </div>
-                                <nav aria-label="Page navigation example">
-                                    <ul class="pagination" id="completedPagination">
-                                        <!-- 分页将通过JavaScript动态生成 -->
-                                    </ul>
-                                </nav>
+                            <div class="entrance-name">查看评估线索</div>
+                        </div>
+                        <div class="card entrance-card" onclick="window.location.href='线索管理页.html'">
+                            <div class="entrance-icon">
+                                <i class="fa fa-folder-open-o"></i>
                             </div>
+                            <div class="entrance-name">新增评估线索</div>
+                        </div>
+                        <div class="card entrance-card" onclick="window.location.href='服务协议或计划打印.html'">
+                            <div class="entrance-icon">
+                                <i class="fa fa-pencil"></i>
+                            </div>
+                            <div class="entrance-name">服务协议或计划打印</div>
+                        </div>
+                        <div class="card entrance-card" onclick="window.location.href='线上回访.html'">
+                            <div class="entrance-icon">
+                                <i class="fa fa-file-image-o"></i>
+                            </div>
+                            <div class="entrance-name">线上回访</div>
                         </div>
                     </div>
                 </div>
@@ -283,82 +407,191 @@
         </div>
     </div>
 
-    <!-- 回访表单弹窗 -->
-    <div class="modal fade" id="visitFormModal" tabindex="-1" aria-hidden="true">
+    <!-- 评估详情弹窗 -->
+    <div class="modal fade" id="assessmentDetailModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">线上回访记录 - <span id="visitFormName">李四</span></h5>
+                    <h5 class="modal-title">评估对象详情 - <span id="detailNameDisplay">李四</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="visit-form" id="visitForm">
-                        <div class="row">
-                            <!-- 只读信息区 -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>回访日期</label>
-                                    <input type="date" class="form-control" id="visitDate" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>服务对象姓名</label>
-                                    <input type="text" class="form-control" id="visitObjectName" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>身份证号</label>
-                                    <input type="text" class="form-control" id="visitObjectIdcard" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>对应护理员</label>
-                                    <input type="text" class="form-control" id="visitNurse" readonly>
-                                </div>
-                            </div>
-                            <!-- 交互区 -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>满意度 <span class="text-danger">*</span></label>
-                                    <div class="satisfaction-radio">
-                                        <label>
-                                            <input type="radio" name="satisfaction" value="1"> 非常满意
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="satisfaction" value="2"> 满意
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="satisfaction" value="3"> 一般
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="satisfaction" value="4"> 不满意
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>服务对象要求</label>
-                                    <textarea class="form-control" id="clientReq" rows="3" placeholder="请输入服务对象的要求（限254字）" maxlength="254"></textarea>
-                                    <div class="form-text">当前输入字数：<span id="reqWordCount">0</span>/254</div>
-                                </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">姓名</label>
+                                <div class="form-control-plaintext" id="detailName">-</div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>现场检查具体情况描述</label>
-                                    <textarea class="form-control" id="visitDesc" rows="4" placeholder="请输入现场检查的具体情况描述（限254字）" maxlength="254"></textarea>
-                                    <div class="form-text">当前输入字数：<span id="descWordCount">0</span>/254</div>
-                                </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">性别</label>
+                                <div class="form-control-plaintext" id="detailGender">-</div>
                             </div>
                         </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">身份证号</label>
+                                <div class="form-control-plaintext" id="detailIdCard">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">地址</label>
+                                <div class="form-control-plaintext" id="detailAddress">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">服务对象联系电话</label>
+                                <div class="form-control-plaintext" id="detailPhone">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">家属姓名</label>
+                                <div class="form-control-plaintext" id="detailFamily">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">家属联系电话</label>
+                                <div class="form-control-plaintext" id="detailFamilyPhone">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">关系</label>
+                                <div class="form-control-plaintext" id="detailRelationship">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">医保类型</label>
+                                <div class="form-control-plaintext" id="detailMedicalInsurance">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">残疾等级</label>
+                                <div class="form-control-plaintext" id="detailDisabilityLevel">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">是否低保户</label>
+                                <div class="form-control-plaintext" id="detailIsLowIncome">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">失能原因</label>
+                                <div class="form-control-plaintext" id="detailDisabilityReason">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">情况说明</label>
+                                <div class="form-control-plaintext" id="detailDescription" style="min-height: 60px; white-space: pre-wrap;">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导航弹窗 -->
+    <div class="modal fade" id="navigateModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="fa fa-map-marker fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="mb-3">正在跳转到导航软件</h5>
+                    <p class="text-muted mb-0">请稍候...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导出弹窗 -->
+    <div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="fa fa-spinner fa-spin fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="mb-3">正在导出今日清单</h5>
+                    <p class="text-muted mb-0">请稍候...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑线索弹窗 -->
+    <div class="modal fade" id="editClueModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">编辑评估线索 - <span id="editNameDisplay">李四</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editClueForm">
+                        <input type="hidden" id="editId">
                         <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">姓名 <span class="text-muted" style="font-size: 11px;">(不可修改，需联系机构管理员)</span></label>
+                                    <input type="text" class="form-control" id="editNameInput" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">身份证号 <span class="text-muted" style="font-size: 11px;">(不可修改，需联系机构管理员)</span></label>
+                                    <input type="text" class="form-control" id="editIdCardInput" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">家属姓名</label>
+                                    <input type="text" class="form-control" id="editFamilyInput">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">联系电话 <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="editPhoneInput" placeholder="请输入11位联系电话" maxlength="11">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">社区/村镇</label>
+                                    <input type="text" class="form-control" id="editCommunityInput">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">线索来源</label>
+                                    <input type="text" class="form-control" id="editSourceInput" disabled>
+                                </div>
+                            </div>
                             <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>现场检查照片</label>
-                                    <div class="photo-upload-area" id="photoUploadArea">
-                                        <i class="fa fa-camera"></i>
-                                        <p>点击上传照片</p>
-                                        <p>支持JPG、PNG格式，单张不超过5MB，最多上传5张</p>
-                                        <input type="file" id="photoInput" accept="image/jpeg,image/png,image/jpg" multiple>
-                                    </div>
-                                    <div class="photo-preview-container" id="photoPreviewContainer"></div>
+                                <div class="mb-3">
+                                    <label class="form-label">详细地址 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="editAddressInput" placeholder="请输入详细地址">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">备注</label>
+                                    <textarea class="form-control" id="editRemarkInput" rows="3" placeholder="如：需周末上门评估"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -366,7 +599,61 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-sm btn-primary" id="submitVisitBtn" disabled>提交</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="saveClueEdit">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入线索弹窗 -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">导入自行摸排线索</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="importForm">
+                        <div class="mb-3">
+                            <label class="form-label">上传Excel文件 <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="excelFile" accept=".xlsx, .xls" required>
+                            <div class="form-hint">
+                                请下载模板并按格式填写，支持.xlsx和.xls格式，单次最多导入1000条
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="submitImport">开始导入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入结果弹窗 -->
+    <div class="modal fade" id="importResultModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">导入结果</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center; margin-bottom: 15px; padding: 15px; background: #f5f7fa; border-radius: 8px;">
+                        <p style="margin: 5px 0; font-size: 16px;">成功导入 <span class="text-success" id="successCount" style="font-weight: 700; font-size: 18px;">0</span> 条线索</p>
+                        <p style="margin: 5px 0; font-size: 16px;">失败导入 <span class="text-danger" id="failCount" style="font-weight: 700; font-size: 18px;">0</span> 条线索</p>
+                    </div>
+                    <div id="importResultContent" class="import-result" style="display: none;">
+                        <h6 style="font-size: 14px; margin-bottom: 10px;">失败详情：</h6>
+                        <div id="errorList"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="downloadErrorReport" style="display: none;">下载错误报告</button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="reImport" style="display: none;">重新导入</button>
                 </div>
             </div>
         </div>
@@ -376,696 +663,570 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
-        // 模拟待回访数据（实际应从后端获取）
-        let allPendingVisitData = [
+        // 保存导入结果（用于错误报告下载）
+        let lastImportResults = null;
+
+        // 模拟线索数据（实际应从后端获取）
+        let clueData = [
             {
                 id: 1,
-                client_id: 101,
+                date: '2024-05-20',
                 name: '李四',
                 idcard: '330101********1234',
-                address: '越城区解放南路123号',
+                family: '李五',
                 phone: '13812345678',
-                nurse: '王五',
-                alloc_time: '2024-05-10 09:00:00',
-                last_visit: '2024-04-15',
-                area: '越城区'
+                community: '西湖区XX社区',
+                address: '西湖区XX街道XX小区3栋502室',
+                source: '社区',
+                remark: '',
+                assignTime: '2024-05-20 09:00:00'
             },
             {
                 id: 2,
-                client_id: 102,
-                name: '赵六',
+                date: '2024-05-19',
+                name: '王五',
                 idcard: '330102********5678',
-                address: '柯桥区柯桥大道456号',
+                family: '王六',
                 phone: '13912345678',
-                nurse: '钱七',
-                alloc_time: '2024-05-08 14:30:00',
-                last_visit: '2024-03-20',
-                area: '柯桥区'
+                community: '上城区XX村镇',
+                address: '上城区XX镇XX村2组15号',
+                source: '医保',
+                remark: '',
+                assignTime: '2024-05-19 14:30:00'
             },
             {
                 id: 3,
-                client_id: 103,
-                name: '孙八',
+                date: '2024-05-18',
+                name: '赵六',
                 idcard: '330103********9012',
-                address: '上虞区百官街道789号',
+                family: '赵七',
                 phone: '13712345678',
-                nurse: '周九',
-                alloc_time: '2024-05-05 10:15:00',
-                last_visit: '2024-02-10',
-                area: '上虞区'
-            },
-            {
-                id: 4,
-                client_id: 104,
-                name: '吴十',
-                idcard: '330104********1111',
-                address: '越城区胜利路111号',
-                phone: '13612345678',
-                nurse: '王五',
-                alloc_time: '2024-05-12 08:00:00',
-                last_visit: '2024-03-25',
-                area: '越城区'
+                community: '拱墅区XX社区',
+                address: '拱墅区XX路XX号XX公寓2单元301室',
+                source: '自行摸排',
+                remark: '需周末上门评估',
+                assignTime: '2024-05-18 10:15:00'
             }
         ];
 
-        // 模拟已回访数据（实际应从后端获取）
-        let allCompletedVisitData = [
-            {
-                id: 1,
-                visit_time: '2024-05-20 14:30:00',
-                client_name: '张三',
-                nurse: '王五',
-                visit_type: '线上',
-                satisfaction: 1,
-                satisfaction_text: '非常满意',
-                client_req: '希望增加服务频次',
-                visit_desc: '家属反馈护理员服务专业，态度热情'
-            },
-            {
-                id: 2,
-                visit_time: '2024-05-18 10:20:00',
-                client_name: '刘一',
-                nurse: '钱七',
-                visit_type: '线上',
-                satisfaction: 3,
-                satisfaction_text: '一般',
-                client_req: '希望增加康复训练频次',
-                visit_desc: '家属希望护理员能增加康复训练的频次'
-            },
-            {
-                id: 3,
-                visit_time: '2024-05-15 16:45:00',
-                client_name: '陈二',
-                nurse: '周九',
-                visit_type: '线上',
-                satisfaction: 4,
-                satisfaction_text: '不满意',
-                client_req: '要求按时到岗，保证服务时长',
-                visit_desc: '家属反馈护理员两次迟到，服务时长不足'
-            },
-            {
-                id: 4,
-                visit_time: '2024-05-10 09:30:00',
-                client_name: '李四',
-                nurse: '王五',
-                visit_type: '线上',
-                satisfaction: 2,
-                satisfaction_text: '满意',
-                client_req: '无',
-                visit_desc: '服务正常，无特殊情况'
-            }
-        ];
-        
+        // 通知点击事件
         $('.notification').click(function() {
             alert('您有3条新通知：\n1. 平台管理员更新了服务计划格式\n2. 医保局驳回了1条评估材料，请修改后重新提交\n3. 新分配了5条评估线索');
         });
-        // 待回访筛选和分页配置
-        let pendingFilters = {
-            area: '',
-            nurse: '',
-            days: ''
-        };
-        let pendingPagination = {
-            currentPage: 1,
-            pageSize: 10,
-            total: 0
-        };
 
-        // 已回访筛选和分页配置
-        let completedFilters = {
-            startDate: '',
-            endDate: '',
-            satisfaction: ''
-        };
-        let completedPagination = {
-            currentPage: 1,
-            pageSize: 10,
-            total: 0
-        };
+        // 查看详情按钮点击事件
+        $(document).on('click', '.view-detail-btn', function() {
+            const data = $(this).data();
+            
+            // 填充详情弹窗数据
+            $('#detailNameDisplay').text(data.name || '-');
+            $('#detailName').text(data.name || '-');
+            $('#detailGender').text(data.gender || '-');
+            $('#detailIdCard').text(data.idcard || '-');
+            $('#detailAddress').text(data.address || '-');
+            $('#detailPhone').text(data.phone || '-');
+            $('#detailFamily').text(data.family || '-');
+            $('#detailFamilyPhone').text(data.familyPhone || '-');
+            $('#detailRelationship').text(data.relationship || '-');
+            $('#detailMedicalInsurance').text(data.medicalInsurance || '-');
+            $('#detailDisabilityLevel').text(data.disabilityLevel || '-');
+            $('#detailIsLowIncome').text(data.isLowIncome || '-');
+            $('#detailDisabilityReason').text(data.disabilityReason || '-');
+            $('#detailDescription').text(data.description || '-');
+            
+            // 保存数据到sessionStorage，以便在目标页面显示弹窗
+            sessionStorage.setItem('showAssessmentDetail', 'true');
+            sessionStorage.setItem('assessmentDetailData', JSON.stringify({
+                name: data.name,
+                gender: data.gender,
+                idcard: data.idcard,
+                address: data.address,
+                phone: data.phone,
+                family: data.family,
+                familyPhone: data.familyPhone,
+                relationship: data.relationship,
+                medicalInsurance: data.medicalInsurance,
+                disabilityLevel: data.disabilityLevel,
+                isLowIncome: data.isLowIncome,
+                disabilityReason: data.disabilityReason,
+                description: data.description
+            }));
+            
+            // 跳转到线索管理页
+            window.location.href = '线索管理页.html';
+        });
 
-        // 筛选待回访数据
-        function filterPendingVisitData() {
-            let filtered = allPendingVisitData.filter(visit => {
-                if (pendingFilters.area && visit.area !== pendingFilters.area) {
-                    return false;
-                }
-                if (pendingFilters.nurse && visit.nurse !== pendingFilters.nurse) {
-                    return false;
-                }
-                if (pendingFilters.days) {
-                    const days = parseInt(pendingFilters.days);
-                    const lastVisitDate = new Date(visit.last_visit);
-                    const today = new Date();
-                    const diffDays = Math.floor((today - lastVisitDate) / (1000 * 60 * 60 * 24));
-                    if (diffDays < days) {
-                        return false;
-                    }
-                }
-                return true;
+        // 导航前往按钮点击事件
+        $(document).on('click', '.navigate-btn', function() {
+            const data = $(this).data();
+            
+            // 显示导航弹窗
+            const navigateModal = new bootstrap.Modal(document.getElementById('navigateModal'));
+            navigateModal.show();
+            
+            // 模拟导航跳转（实际项目中可以调用地图API）
+            setTimeout(function() {
+                navigateModal.hide();
+                // 这里可以实际调用导航API，例如：
+                // window.open('https://uri.amap.com/navigation?to=' + encodeURIComponent(data.address), '_blank');
+                alert('导航功能：\n评估对象：' + data.name + '\n地址：' + data.address);
+            }, 2000);
+        });
+
+        // 导出今日清单按钮点击事件
+        $('#exportTodayList').click(function() {
+            // 显示导出弹窗
+            const exportModal = new bootstrap.Modal(document.getElementById('exportModal'));
+            exportModal.show();
+            
+            // 模拟导出过程
+            setTimeout(function() {
+                exportModal.hide();
+                alert('今日清单导出成功！');
+                // 实际项目中可以触发文件下载
+            }, 2000);
+        });
+
+        // 编辑线索按钮点击事件
+        $(document).on('click', '.edit-clue-btn', function() {
+            const data = $(this).data();
+            $('#editId').val(data.id);
+            $('#editNameDisplay').text(data.name);
+            $('#editNameInput').val(data.name);
+            $('#editIdCardInput').val(data.idcard);
+            $('#editFamilyInput').val(data.family || '');
+            $('#editPhoneInput').val(data.phone || '');
+            $('#editCommunityInput').val(data.community || '');
+            $('#editAddressInput').val(data.address || '');
+            $('#editSourceInput').val(data.source || '');
+            $('#editRemarkInput').val(data.remark || '');
+            
+            const editModal = new bootstrap.Modal(document.getElementById('editClueModal'));
+            editModal.show();
+        });
+
+        // 保存线索编辑
+        $('#saveClueEdit').click(function() {
+            const id = $('#editId').val();
+            const phone = $('#editPhoneInput').val().trim();
+            const address = $('#editAddressInput').val().trim();
+            const family = $('#editFamilyInput').val().trim();
+            const community = $('#editCommunityInput').val().trim();
+            const remark = $('#editRemarkInput').val().trim();
+            
+            // 校验
+            if (!phone) {
+                alert('请输入联系电话');
+                $('#editPhoneInput').focus();
+                return;
+            }
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                alert('请输入有效的11位联系电话');
+                $('#editPhoneInput').focus();
+                return;
+            }
+            if (!address) {
+                alert('请输入详细地址');
+                $('#editAddressInput').focus();
+                return;
+            }
+            
+            // 更新数据
+            const clue = clueData.find(c => c.id == id);
+            if (clue) {
+                clue.phone = phone;
+                clue.address = address;
+                clue.family = family;
+                clue.community = community;
+                clue.remark = remark;
+                
+                // 更新表格显示
+                updateClueTable();
+                
+                // 模拟同步到手机端
+                console.log('同步到手机端：', clue);
+            }
+            
+            alert('线索编辑成功！已同步至手机端"评估线索查看"列表');
+            bootstrap.Modal.getInstance(document.getElementById('editClueModal')).hide();
+        });
+
+        // 更新线索表格
+        function updateClueTable() {
+            // 按分配时间倒序排序
+            const sortedData = [...clueData].sort((a, b) => {
+                return new Date(b.assignTime) - new Date(a.assignTime);
             });
-
-            pendingPagination.total = filtered.length;
-            return filtered;
-        }
-
-        // 筛选已回访数据
-        function filterCompletedVisitData() {
-            let filtered = allCompletedVisitData.filter(visit => {
-                const visitDate = visit.visit_time.split(' ')[0];
-                if (completedFilters.startDate && visitDate < completedFilters.startDate) {
-                    return false;
-                }
-                if (completedFilters.endDate && visitDate > completedFilters.endDate) {
-                    return false;
-                }
-                if (completedFilters.satisfaction && visit.satisfaction.toString() !== completedFilters.satisfaction) {
-                    return false;
-                }
-                return true;
+            
+            const tbody = $('#clueTableBody');
+            tbody.empty();
+            
+            sortedData.forEach(clue => {
+                const sourceBadge = clue.source === '社区' ? 'bg-info' : 
+                                   clue.source === '医保' ? 'bg-success' : 'bg-warning';
+                const phoneDisplay = clue.phone.length === 11 ? 
+                    clue.phone.substring(0, 3) + '****' + clue.phone.substring(7) : clue.phone;
+                const idcardDisplay = clue.idcard.length > 8 ? 
+                    clue.idcard.substring(0, 6) + '********' + clue.idcard.substring(14) : clue.idcard;
+                
+                const row = `
+                    <tr>
+                        <td>${clue.date}</td>
+                        <td>${clue.name}</td>
+                        <td>${idcardDisplay}</td>
+                        <td>${clue.family || ''}</td>
+                        <td>${phoneDisplay}</td>
+                        <td>${clue.community || ''}</td>
+                        <td class="text-left">${clue.address}</td>
+                        <td><span class="badge ${sourceBadge}">${clue.source}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary edit-clue-btn" 
+                                    data-id="${clue.id}" 
+                                    data-date="${clue.date}"
+                                    data-name="${clue.name}" 
+                                    data-idcard="${clue.idcard}" 
+                                    data-family="${clue.family || ''}" 
+                                    data-phone="${clue.phone}" 
+                                    data-community="${clue.community || ''}" 
+                                    data-address="${clue.address}" 
+                                    data-source="${clue.source}"
+                                    data-remark="${clue.remark || ''}">
+                                <i class="fa fa-edit"></i> 编辑
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
             });
-
-            completedPagination.total = filtered.length;
-            return filtered;
         }
 
-        // 渲染待回访表格
-        function renderPendingTable() {
-            const filteredData = filterPendingVisitData();
-            const startIndex = (pendingPagination.currentPage - 1) * pendingPagination.pageSize;
-            const endIndex = startIndex + pendingPagination.pageSize;
-            const pageData = filteredData.slice(startIndex, endIndex);
-
-            const tbody = $('#pendingVisitTableBody');
-            tbody.empty();
-
-            if (pageData.length === 0) {
-                tbody.append('<tr><td colspan="8" style="text-align: center; padding: 40px; color: #999;">暂无数据</td></tr>');
-            } else {
-                pageData.forEach(visit => {
-                    const phoneDisplay = visit.phone.length === 11 ? 
-                        visit.phone.substring(0, 3) + '****' + visit.phone.substring(7) : visit.phone;
-                    const row = `
-                        <tr>
-                            <td>${visit.name}</td>
-                            <td>${visit.idcard}</td>
-                            <td class="text-left">${visit.address}</td>
-                            <td>${phoneDisplay}</td>
-                            <td>${visit.nurse}</td>
-                            <td>${visit.alloc_time}</td>
-                            <td>${visit.last_visit}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary execute-visit-btn" 
-                                        data-id="${visit.id}" 
-                                        data-client-id="${visit.client_id}"
-                                        data-name="${visit.name}" 
-                                        data-idcard="${visit.idcard}" 
-                                        data-nurse="${visit.nurse}" 
-                                        data-phone="${phoneDisplay}" 
-                                        data-address="${visit.address}" 
-                                        data-alloc-time="${visit.alloc_time}"
-                                        data-last-visit="${visit.last_visit}">
-                                    <i class="fa fa-pencil"></i> 执行回访
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.append(row);
-                });
-            }
-
-            renderPendingPagination();
-        }
-
-        // 渲染已回访表格
-        function renderCompletedTable() {
-            const filteredData = filterCompletedVisitData();
-            const startIndex = (completedPagination.currentPage - 1) * completedPagination.pageSize;
-            const endIndex = startIndex + completedPagination.pageSize;
-            const pageData = filteredData.slice(startIndex, endIndex);
-
-            const tbody = $('#completedVisitTableBody');
-            tbody.empty();
-
-            if (pageData.length === 0) {
-                tbody.append('<tr><td colspan="8" style="text-align: center; padding: 40px; color: #999;">暂无数据</td></tr>');
-            } else {
-                pageData.forEach(visit => {
-                    const satisfactionClass = visit.satisfaction === 1 ? 'text-success' : 
-                                             visit.satisfaction === 2 ? 'text-success' : 
-                                             visit.satisfaction === 3 ? 'text-warning' : 'text-danger';
-                    const row = `
-                        <tr>
-                            <td>${visit.visit_time}</td>
-                            <td>${visit.client_name}</td>
-                            <td>${visit.nurse}</td>
-                            <td><span class="badge bg-primary">${visit.visit_type}</span></td>
-                            <td><span class="${satisfactionClass}">${visit.satisfaction_text}</span></td>
-                            <td class="text-left">${visit.client_req || '无'}</td>
-                            <td class="text-left">${visit.visit_desc || '无'}</td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary view-detail-btn" data-id="${visit.id}">
-                                    <i class="fa fa-eye"></i> 查看详情
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.append(row);
-                });
-            }
-
-            renderCompletedPagination();
-        }
-
-        // 渲染待回访分页
-        function renderPendingPagination() {
-            const totalPages = Math.ceil(pendingPagination.total / pendingPagination.pageSize);
-            const pagination = $('#pendingPagination');
-            pagination.empty();
-
-            if (totalPages <= 1) {
-                return;
-            }
-
-            const prevDisabled = pendingPagination.currentPage === 1 ? 'disabled' : '';
-            pagination.append(`
-                <li class="page-item ${prevDisabled}">
-                    <a class="page-link" href="#" data-page="${pendingPagination.currentPage - 1}">上一页</a>
-                </li>
-            `);
-
-            for (let i = 1; i <= totalPages; i++) {
-                const active = i === pendingPagination.currentPage ? 'active' : '';
-                pagination.append(`
-                    <li class="page-item ${active}">
-                        <a class="page-link" href="#" data-page="${i}">${i}</a>
-                    </li>
-                `);
-            }
-
-            const nextDisabled = pendingPagination.currentPage === totalPages ? 'disabled' : '';
-            pagination.append(`
-                <li class="page-item ${nextDisabled}">
-                    <a class="page-link" href="#" data-page="${pendingPagination.currentPage + 1}">下一页</a>
-                </li>
-            `);
-        }
-
-        // 渲染已回访分页
-        function renderCompletedPagination() {
-            const totalPages = Math.ceil(completedPagination.total / completedPagination.pageSize);
-            const pagination = $('#completedPagination');
-            pagination.empty();
-
-            if (totalPages <= 1) {
-                return;
-            }
-
-            const prevDisabled = completedPagination.currentPage === 1 ? 'disabled' : '';
-            pagination.append(`
-                <li class="page-item ${prevDisabled}">
-                    <a class="page-link" href="#" data-page="${completedPagination.currentPage - 1}">上一页</a>
-                </li>
-            `);
-
-            for (let i = 1; i <= totalPages; i++) {
-                const active = i === completedPagination.currentPage ? 'active' : '';
-                pagination.append(`
-                    <li class="page-item ${active}">
-                        <a class="page-link" href="#" data-page="${i}">${i}</a>
-                    </li>
-                `);
-            }
-
-            const nextDisabled = completedPagination.currentPage === totalPages ? 'disabled' : '';
-            pagination.append(`
-                <li class="page-item ${nextDisabled}">
-                    <a class="page-link" href="#" data-page="${completedPagination.currentPage + 1}">下一页</a>
-                </li>
-            `);
-        }
-
-        // 待回访查询按钮
-        $('#pendingSearchBtn').click(function() {
-            pendingFilters.area = $('#pendingAreaFilter').val();
-            pendingFilters.nurse = $('#pendingNurseFilter').val();
-            pendingFilters.days = $('#pendingDaysFilter').val();
-            pendingPagination.currentPage = 1;
-            renderPendingTable();
-        });
-
-        // 待回访重置按钮
-        $('#pendingResetBtn').click(function() {
-            $('#pendingAreaFilter').val('');
-            $('#pendingNurseFilter').val('');
-            $('#pendingDaysFilter').val('');
-            pendingFilters = { area: '', nurse: '', days: '' };
-            pendingPagination.currentPage = 1;
-            renderPendingTable();
-        });
-
-        // 已回访查询按钮
-        $('#completedSearchBtn').click(function() {
-            completedFilters.startDate = $('#visitStartDate').val();
-            completedFilters.endDate = $('#visitEndDate').val();
-            completedFilters.satisfaction = $('#completedSatisfactionFilter').val();
-            completedPagination.currentPage = 1;
-            renderCompletedTable();
-        });
-
-        // 已回访重置按钮
-        $('#completedResetBtn').click(function() {
-            $('#visitStartDate').val('');
-            $('#visitEndDate').val('');
-            $('#completedSatisfactionFilter').val('');
-            completedFilters = { startDate: '', endDate: '', satisfaction: '' };
-            completedPagination.currentPage = 1;
-            renderCompletedTable();
-        });
-
-        // 待回访分页点击
-        $(document).on('click', '#pendingPagination .page-link', function(e) {
-            e.preventDefault();
-            const page = $(this).data('page');
-            if (page && page !== pendingPagination.currentPage && page >= 1) {
-                pendingPagination.currentPage = page;
-                renderPendingTable();
-            }
-        });
-
-        // 已回访分页点击
-        $(document).on('click', '#completedPagination .page-link', function(e) {
-            e.preventDefault();
-            const page = $(this).data('page');
-            if (page && page !== completedPagination.currentPage && page >= 1) {
-                completedPagination.currentPage = page;
-                renderCompletedTable();
-            }
-        });
-
-        // 导出个人回访记录
-        $('#exportVisitBtn').click(function() {
-            const filteredData = filterCompletedVisitData();
-            if (filteredData.length === 0) {
-                alert('没有可导出的数据');
-                return;
-            }
-
+        // 下载模板
+        $('#downloadTemplate').click(function() {
+            // 创建工作簿
             const wb = XLSX.utils.book_new();
-            const exportData = [
-                ['回访日期', '服务对象', '护理员', '回访类型', '满意度', '服务对象要求', '现场检查描述']
+            
+            // 定义表头（按照用户要求的顺序）
+            const headers = [
+                '姓名', 
+                '性别', 
+                '身份证号', 
+                '地址', 
+                '服务对象联系电话', 
+                '家属姓名', 
+                '家属联系电话', 
+                '关系', 
+                '医保类型', 
+                '残疾等级', 
+                '是否低保户', 
+                '失能原因', 
+                '情况说明'
             ];
+            
+            // 创建工作表数据
+            const wsData = [headers];
+            
+            // 添加示例数据行（带说明）
+            const exampleRow = [
+                '张三', 
+                '男', 
+                '330101199001011234', 
+                '杭州市西湖区XX街道XX小区3栋502室', 
+                '13812345678', 
+                '张四', 
+                '13912345678', 
+                '父子', 
+                '职工医保', 
+                '二级', 
+                '是', 
+                '疾病', 
+                '服务对象因疾病导致行动不便，需要长期护理服务'
+            ];
+            wsData.push(exampleRow);
+            
+            // 创建工作表
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            // 设置列宽
+            ws['!cols'] = [
+                { wch: 10 }, // 姓名
+                { wch: 8 },  // 性别
+                { wch: 18 }, // 身份证号
+                { wch: 35 }, // 地址
+                { wch: 15 }, // 服务对象联系电话
+                { wch: 10 }, // 家属姓名
+                { wch: 15 }, // 家属联系电话
+                { wch: 10 }, // 关系
+                { wch: 12 }, // 医保类型
+                { wch: 10 }, // 残疾等级
+                { wch: 12 }, // 是否低保户
+                { wch: 12 }, // 失能原因
+                { wch: 40 }  // 情况说明
+            ];
+            
+            // 添加工作表到工作簿
+            XLSX.utils.book_append_sheet(wb, ws, '自行摸排线索模板');
+            
+            // 下载文件
+            XLSX.writeFile(wb, '自行摸排线索模板.xlsx');
+        });
 
-            filteredData.forEach(visit => {
-                exportData.push([
-                    visit.visit_time,
-                    visit.client_name,
-                    visit.nurse,
-                    visit.visit_type,
-                    visit.satisfaction_text,
-                    visit.client_req || '无',
-                    visit.visit_desc || '无'
+        // 导入线索
+        $('#importClues').click(function() {
+            $('#excelFile').val('');
+            const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+            importModal.show();
+        });
+
+        // 提交导入
+        $('#submitImport').click(function() {
+            const file = $('#excelFile')[0].files[0];
+            if (!file) {
+                alert('请选择Excel文件');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    
+                    if (jsonData.length < 2) {
+                        alert('Excel文件格式错误，至少需要表头和数据行');
+                        return;
+                    }
+                    
+                    // 验证表头
+                    const headers = jsonData[0];
+                    const expectedHeaders = ['日期', '姓名', '身份证号', '家属姓名', '联系电话', '社区/村镇', '地址', '备注'];
+                    const headerMatch = expectedHeaders.every((h, i) => headers[i] === h);
+                    
+                    if (!headerMatch) {
+                        alert('Excel表头格式不正确，请使用下载的模板');
+                        return;
+                    }
+                    
+                    // 处理数据
+                    const importResults = {
+                        success: [],
+                        failed: []
+                    };
+                    
+                    // 获取现有线索的身份证号+姓名组合（用于重复校验）
+                    const existingClues = new Set(clueData.map(c => c.idcard + '|' + c.name));
+                    
+                    for (let i = 1; i < jsonData.length; i++) {
+                        const row = jsonData[i];
+                        const rowNum = i + 1;
+                        
+                        // 跳过空行
+                        if (!row || row.every(cell => !cell || cell.toString().trim() === '')) {
+                            continue;
+                        }
+                        
+                        const clue = {
+                            date: row[0] ? String(row[0]).trim() : '',
+                            name: row[1] ? String(row[1]).trim() : '',
+                            idcard: row[2] ? String(row[2]).trim() : '',
+                            family: row[3] ? String(row[3]).trim() : '',
+                            phone: row[4] ? String(row[4]).trim() : '',
+                            community: row[5] ? String(row[5]).trim() : '',
+                            address: row[6] ? String(row[6]).trim() : '',
+                            remark: row[7] ? String(row[7]).trim() : ''
+                        };
+                        
+                        // 校验
+                        const errors = [];
+                        
+                        // 必填字段校验
+                        if (!clue.name) {
+                            errors.push('姓名为空');
+                        }
+                        if (!clue.idcard) {
+                            errors.push('身份证号为空');
+                        }
+                        if (!clue.phone) {
+                            errors.push('联系电话为空');
+                        } else if (!/^1[3-9]\d{9}$/.test(clue.phone)) {
+                            errors.push('联系电话格式错误（需为11位）');
+                        }
+                        
+                        // 重复校验
+                        const clueKey = clue.idcard + '|' + clue.name;
+                        if (existingClues.has(clueKey)) {
+                            errors.push('与已分配的线索重复（身份证号+姓名）');
+                        }
+                        
+                        if (errors.length > 0) {
+                            importResults.failed.push({
+                                row: rowNum,
+                                clue: clue,
+                                errors: errors
+                            });
+                        } else {
+                            // 添加新线索
+                            const newClue = {
+                                id: clueData.length > 0 ? Math.max(...clueData.map(c => c.id)) + 1 : 1,
+                                date: clue.date || new Date().toISOString().split('T')[0],
+                                name: clue.name,
+                                idcard: clue.idcard,
+                                family: clue.family,
+                                phone: clue.phone,
+                                community: clue.community,
+                                address: clue.address,
+                                source: '自行摸排',
+                                remark: clue.remark,
+                                assignTime: new Date().toISOString().replace('T', ' ').substring(0, 19)
+                            };
+                            
+                            clueData.push(newClue);
+                            existingClues.add(clueKey);
+                            importResults.success.push(newClue);
+                        }
+                    }
+                    
+                    // 保存导入结果
+                    lastImportResults = importResults;
+                    
+                    // 显示结果
+                    showImportResult(importResults);
+                    
+                    // 更新表格
+                    updateClueTable();
+                    
+                    // 关闭导入弹窗
+                    bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
+                    
+                } catch (error) {
+                    alert('文件读取失败：' + error.message);
+                    console.error(error);
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        });
+
+        // 显示导入结果
+        function showImportResult(results) {
+            const successCount = results.success.length;
+            const failCount = results.failed.length;
+            
+            $('#successCount').text(successCount);
+            $('#failCount').text(failCount);
+            
+            const errorList = $('#errorList');
+            errorList.empty();
+            
+            if (failCount > 0) {
+                $('#importResultContent').show();
+                $('#downloadErrorReport').show();
+                $('#reImport').show();
+                
+                results.failed.forEach(item => {
+                    const errorText = item.errors.join('、');
+                    const errorItem = `
+                        <div class="result-item">
+                            <span>第${item.row}行：</span>
+                            <span class="error">${errorText}</span>
+                        </div>
+                    `;
+                    errorList.append(errorItem);
+                });
+            } else {
+                $('#importResultContent').hide();
+                $('#downloadErrorReport').hide();
+                $('#reImport').hide();
+            }
+            
+            const resultModal = new bootstrap.Modal(document.getElementById('importResultModal'));
+            resultModal.show();
+        }
+
+        // 下载错误报告
+        $('#downloadErrorReport').click(function() {
+            if (!lastImportResults || lastImportResults.failed.length === 0) {
+                alert('没有错误数据可下载');
+                return;
+            }
+            
+            const wb = XLSX.utils.book_new();
+            const errorData = [
+                [
+                    '行号', 
+                    '姓名', 
+                    '性别', 
+                    '身份证号', 
+                    '地址', 
+                    '服务对象联系电话', 
+                    '家属姓名', 
+                    '家属联系电话', 
+                    '关系', 
+                    '医保类型', 
+                    '残疾等级', 
+                    '是否低保户', 
+                    '失能原因', 
+                    '情况说明', 
+                    '错误原因'
+                ]
+            ];
+            
+            // 填充实际的错误数据
+            lastImportResults.failed.forEach(item => {
+                const clue = item.clue;
+                errorData.push([
+                    item.row,
+                    clue.name || '',
+                    clue.gender || '',
+                    clue.idcard || '',
+                    clue.address || '',
+                    clue.phone || '',
+                    clue.family || '',
+                    clue.familyPhone || '',
+                    clue.relationship || '',
+                    clue.medicalInsurance || '',
+                    clue.disabilityLevel || '',
+                    clue.isLowIncome || '',
+                    clue.disabilityReason || '',
+                    clue.description || '',
+                    item.errors.join('；')
                 ]);
             });
-
-            const ws = XLSX.utils.aoa_to_sheet(exportData);
+            
+            const ws = XLSX.utils.aoa_to_sheet(errorData);
             ws['!cols'] = [
-                { wch: 20 }, // 回访日期
-                { wch: 12 }, // 服务对象
-                { wch: 10 }, // 护理员
-                { wch: 12 }, // 回访类型
-                { wch: 12 }, // 满意度
-                { wch: 30 }, // 服务对象要求
-                { wch: 40 }  // 现场检查描述
+                { wch: 8 },  // 行号
+                { wch: 10 }, // 姓名
+                { wch: 8 },  // 性别
+                { wch: 18 }, // 身份证号
+                { wch: 35 }, // 地址
+                { wch: 15 }, // 服务对象联系电话
+                { wch: 10 }, // 家属姓名
+                { wch: 15 }, // 家属联系电话
+                { wch: 10 }, // 关系
+                { wch: 12 }, // 医保类型
+                { wch: 10 }, // 残疾等级
+                { wch: 12 }, // 是否低保户
+                { wch: 12 }, // 失能原因
+                { wch: 40 }, // 情况说明
+                { wch: 40 }  // 错误原因
             ];
-
-            XLSX.utils.book_append_sheet(wb, ws, '个人回访记录');
-            const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
-            XLSX.writeFile(wb, `个人回访记录_${today}.xlsx`);
+            
+            XLSX.utils.book_append_sheet(wb, ws, '导入错误报告');
+            XLSX.writeFile(wb, '导入错误报告.xlsx');
         });
 
-        // 页面加载完成后初始化
-        $(function() {
-            // 设置回访日期默认值为当前日期
-            const today = new Date().toISOString().split('T')[0];
-            $('#visitDate').val(today);
-
-            // 照片上传相关变量
-            let uploadedPhotos = [];
-            const maxPhotos = 5;
-            const maxPhotoSize = 5 * 1024 * 1024; // 5MB
-
-            // 照片上传区域点击事件
-            $('#photoUploadArea').click(function() {
-                $('#photoInput').click();
-            });
-
-            // 照片选择事件
-            $('#photoInput').change(function(e) {
-                const files = e.target.files;
-                if (files.length === 0) return;
-
-                // 检查数量限制
-                if (uploadedPhotos.length + files.length > maxPhotos) {
-                    alert(`最多只能上传${maxPhotos}张照片，当前已上传${uploadedPhotos.length}张`);
-                    return;
-                }
-
-                // 处理选中的文件
-                Array.from(files).forEach(file => {
-                    // 检查文件大小
-                    if (file.size > maxPhotoSize) {
-                        alert(`文件 ${file.name} 大小超过5MB，已跳过`);
-                        return;
-                    }
-
-                    // 检查文件类型
-                    if (!file.type.match('image/(jpeg|jpg|png)')) {
-                        alert(`文件 ${file.name} 格式不支持，仅支持JPG、PNG格式`);
-                        return;
-                    }
-
-                    // 读取文件
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        uploadedPhotos.push({
-                            id: Date.now() + Math.random(),
-                            file: file,
-                            url: event.target.result,
-                            name: file.name
-                        });
-                        renderPhotoPreview();
-                    };
-                    reader.readAsDataURL(file);
-                });
-
-                // 清空input，允许重复选择同一文件
-                $(this).val('');
-            });
-
-            // 渲染照片预览
-            function renderPhotoPreview() {
-                const container = $('#photoPreviewContainer');
-                container.empty();
-
-                uploadedPhotos.forEach((photo, index) => {
-                    const previewItem = $('<div class="photo-preview-item"></div>');
-                    previewItem.html(`
-                        <img src="${photo.url}" alt="${photo.name}">
-                        <button type="button" class="photo-remove" data-index="${index}">
-                            <i class="fa fa-times"></i>
-                        </button>
-                    `);
-                    container.append(previewItem);
-                });
-            }
-
-            // 删除照片
-            $(document).on('click', '.photo-remove', function() {
-                const index = $(this).data('index');
-                uploadedPhotos.splice(index, 1);
-                renderPhotoPreview();
-            });
-
-            // 执行回访按钮点击事件（使用事件委托，支持动态生成的按钮）
-            $(document).on('click', '.execute-visit-btn', function() {
-                const data = $(this).data();
-                
-                // 填充表单数据
-                $('#visitFormName').text(data.name);
-                $('#visitObjectName').val(data.name);
-                $('#visitObjectIdcard').val(data.idcard);
-                $('#visitNurse').val(data.nurse);
-                $('#clientReq').val('');
-                $('#visitDesc').val('');
-                $('#reqWordCount').text('0');
-                $('#descWordCount').text('0');
-                
-                // 清空照片
-                uploadedPhotos = [];
-                renderPhotoPreview();
-                
-                // 重置满意度单选按钮
-                $('input[name="satisfaction"]').prop('checked', false);
-                // 禁用提交按钮
-                $('#submitVisitBtn').prop('disabled', true);
-                
-                // 显示弹窗
-                const visitModal = new bootstrap.Modal(document.getElementById('visitFormModal'));
-                visitModal.show();
-            });
-
-            // 满意度单选按钮变化事件
-            $('input[name="satisfaction"]').change(function() {
-                // 只要选中一个满意度，就启用提交按钮
-                const isChecked = $('input[name="satisfaction"]:checked').length > 0;
-                $('#submitVisitBtn').prop('disabled', !isChecked);
-            });
-
-            // 服务对象要求输入框字数统计
-            $('#clientReq').on('input', function() {
-                const text = $(this).val();
-                const length = text.length;
-                $('#reqWordCount').text(length);
-                
-                // 超过254字时截取
-                if (length > 254) {
-                    $(this).val(text.substring(0, 254));
-                    $('#reqWordCount').text('254');
-                }
-            });
-
-            // 现场检查描述输入框字数统计
-            $('#visitDesc').on('input', function() {
-                const text = $(this).val();
-                const length = text.length;
-                $('#descWordCount').text(length);
-                
-                // 超过254字时截取
-                if (length > 254) {
-                    $(this).val(text.substring(0, 254));
-                    $('#descWordCount').text('254');
-                }
-            });
-
-            // 提交回访记录按钮点击事件
-            $('#submitVisitBtn').click(function() {
-                const btn = $(this);
-                const executeBtn = $('.execute-visit-btn[data-id]').filter(function() {
-                    return $(this).data('name') === $('#visitObjectName').val();
-                }).first();
-                
-                if (executeBtn.length === 0) {
-                    alert('无法获取回访记录ID');
-                    return;
-                }
-
-                const visitData = {
-                    client_id: executeBtn.data('client-id'),
-                    alloc_time: executeBtn.data('alloc-time'),
-                    op_id: getCurrentUserId(), // 当前登录用户ID，需要从session或全局变量获取
-                    visit_type: 1, // 1-线上, 2-线下
-                    op_time: new Date().toISOString().slice(0, 19).replace('T', ' '), // 执行回访时间
-                    satisfaction: parseInt($('input[name="satisfaction"]:checked').val()),
-                    client_req: $('#clientReq').val().trim(),
-                    visit_desc: $('#visitDesc').val().trim(),
-                    photos: uploadedPhotos.map(p => ({
-                        name: p.name,
-                        data: p.url // base64格式，实际项目中应该上传到服务器后返回URL
-                    }))
-                };
-
-                // 验证必填项
-                if (!visitData.satisfaction) {
-                    alert('请选择满意度');
-                    return;
-                }
-
-                // 禁用提交按钮，防止重复提交
-                btn.prop('disabled', true).text('提交中...');
-
-                // 实际项目中，这里需要发送AJAX请求到后端保存数据
-                // 示例代码：
-                /*
-                $.ajax({
-                    url: '/api/visit/save',
-                    method: 'POST',
-                    data: JSON.stringify(visitData),
-                    contentType: 'application/json',
-                    success: function(response) {
-                        if (response.success) {
-                            alert(`已成功提交 ${$('#visitObjectName').val()} 的回访记录！`);
-                            $('#visitFormModal').modal('hide');
-                            // 刷新待回访列表
-                            loadPendingVisitList();
-                        } else {
-                            alert('提交失败：' + response.message);
-                            btn.prop('disabled', false).text('提交');
-                        }
-                    },
-                    error: function() {
-                        alert('提交失败，请稍后重试');
-                        btn.prop('disabled', false).text('提交');
-                    }
-                });
-                */
-
-                // 模拟提交成功
-                setTimeout(function() {
-                    alert(`已成功提交 ${$('#visitObjectName').val()} 的回访记录！\n满意度：${getSatisfactionText(visitData.satisfaction)}\n服务对象要求：${visitData.client_req || '无'}\n现场检查描述：${visitData.visit_desc || '无'}\n上传照片：${uploadedPhotos.length}张`);
-                    
-                    // 关闭弹窗
-                    const visitModal = bootstrap.Modal.getInstance(document.getElementById('visitFormModal'));
-                    if (visitModal) {
-                        visitModal.hide();
-                    }
-                    
-                    // 重置表单
-                    btn.prop('disabled', false).text('提交');
-                    
-                    // 模拟刷新待回访列表（实际项目中应重新从后端获取数据）
-                    // loadPendingVisitList();
-                }, 500);
-            });
-
-            // 获取当前用户ID（实际项目中应从session或全局变量获取）
-            function getCurrentUserId() {
-                // 这里应该从实际的用户会话中获取
-                // 示例：return window.currentUser.id;
-                return 1; // 临时返回固定值
-            }
-
-            // 导出回访记录按钮点击事件
-            $('#exportVisitBtn').click(function() {
-                alert('正在导出个人回访记录...\n导出文件格式：CSV\n包含字段：回访日期、服务对象、护理员、满意度、补充说明');
-                // 实际项目中，这里需要发送AJAX请求到后端生成导出文件
-            });
-
-            // 辅助函数：根据满意度值获取显示文本
-            function getSatisfactionText(value) {
-                switch(parseInt(value)) {
-                    case 1: return '非常满意';
-                    case 2: return '满意';
-                    case 3: return '一般';
-                    case 4: return '不满意';
-                    default: return '';
-                }
-            }
-
-            // 查看详情按钮点击事件（已回访列表）
-            $(document).on('click', '.view-detail-btn', function() {
-                const id = $(this).data('id');
-                const visit = allCompletedVisitData.find(v => v.id === id);
-                if (visit) {
-                    alert(`回访记录详情\n\n回访时间：${visit.visit_time}\n服务对象：${visit.client_name}\n护理员：${visit.nurse}\n回访类型：${visit.visit_type}\n满意度：${visit.satisfaction_text}\n服务对象要求：${visit.client_req || '无'}\n现场检查描述：${visit.visit_desc || '无'}`);
-                } else {
-                    alert('查看回访记录详情（ID: ' + id + '）\n实际项目中应打开详情弹窗显示完整信息');
-                }
-            });
-
-            // 初始化：渲染表格
-            renderPendingTable();
-            renderCompletedTable();
+        // 重新导入
+        $('#reImport').click(function() {
+            bootstrap.Modal.getInstance(document.getElementById('importResultModal')).hide();
+            $('#excelFile').val('');
+            const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+            importModal.show();
         });
+
+        // 初始化：按分配时间倒序显示
+        updateClueTable();
     </script>
 </body>
 </html>
